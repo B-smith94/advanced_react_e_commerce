@@ -1,27 +1,29 @@
-import { useContext } from "react";
-import UserContext from "../context/UserContext";
-import { Container, Button } from "react-bootstrap";
-// import { useCartCount } from "../hooks/useCartCount";
+import { Container } from "react-bootstrap";
 import ProductCatalog from "./ProductCatalog";
 import { useSelector } from "react-redux"; 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import { NavLink } from "react-router-dom";
 
 function HomePage() {
-    const { user } = useContext(UserContext);
-    //const cartCount = useCartCount(); // Use the custom hook
-    const navigate = useNavigate()
-    const cartCount = useSelector((state) => state.cart.totalItems); // Redux approach used in place of custom hook
-    // accesses the total items in the cart state
+    const cartCount = useSelector((state) => state.cart.totalItems); 
+    const user = useSelector((state) => state.userAccounts.accounts)
+    const navigate = useNavigate();
+    const userName = user.length > 0 ? user[0].name.firstname: "";
 
-    // gets access from user via useContext, displays current name and log status
+    useEffect(() => {
+        if (user.length === 0) {
+            return navigate("/")
+        } 
+    })
+
     return (
         <Container className="mt-5">
-            <h1>Welcome, {user.name}!</h1>
-            <p>You are now {user.isLoggedIn ? 'logged in' : 'logged out'}.</p>
+            <h1>Welcome, {userName} !</h1>
             <NavLink to='/logout'>Logout</NavLink>
             <br />
-            <NavLink to="/cart">Your cart has {cartCount} item(s).</NavLink> {/* displays the card count */}
+            <NavLink to="/cart">{ cartCount > 0 ? "Your cart has {cartCount} item(s)." : "Your cart is empty." }</NavLink>
             <ProductCatalog />
         </Container>
     );
