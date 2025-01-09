@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CreateUserAccount from '../components/CreateUserAccount';
+import UpdateUserAccount from '../components/UpdateUserAccount.jsx';
 
 global.fetch = jest.fn(() => 
     Promise.resolve({
@@ -11,7 +11,7 @@ global.fetch = jest.fn(() =>
             username: "ex@mpleMan", 
             password: "p@$$w0rD", 
             name: {
-                firstname: 'Jimmy',
+                firstname: 'James',
                 lastname: 'Dean',
             },
             address: {
@@ -27,17 +27,17 @@ global.fetch = jest.fn(() =>
             phone: '1-234-567-8900'
         })
     })
-);
+)
 
 beforeEach(() => {
     fetch.mockClear();
 });
 
-describe('CreateUserAccount Component', () => {
-    test('adds new user to the database upon submit', async () => {
-        render(<CreateUserAccount />)
+describe('Update User Account Component', () => {
+    test('user account is updated upon submission', async () => {
+        render(<UpdateUserAccount />)
 
-        fireEvent.change(screen.getByLabelText(/First Name/i), {target: { value: 'Jimmy'}});
+        fireEvent.change(screen.getByLabelText(/First Name/i), {target: { value: 'James'}});
         fireEvent.change(screen.getByLabelText(/Last Name/i), {target: { value: 'Dean'}});
         fireEvent.change(screen.getByLabelText(/Username/i), {target: { value: 'ex@mpleMan'}});
         fireEvent.change(screen.getByLabelText(/Password/i), {target: { value: 'p@$$w0rD'}});
@@ -46,19 +46,19 @@ describe('CreateUserAccount Component', () => {
         fireEvent.change(screen.getByLabelText(/City/i), {target: { value: 'dudesville'}});
         fireEvent.change(screen.getByLabelText(/Street Address/i), {target: { value: '1342 cool street'}});
         fireEvent.change(screen.getByLabelText(/Zip Code/i), {target: { value: '65421'}});
-
-        fireEvent.click(screen.getByText(/Create Account/i));
+        
+        fireEvent.click(screen.getByText(/Update Account/i));
 
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
-        expect(fetch).toHaveBeenCalledWith('https://fakestoreapi.com/users', {
-            method: "POST",
+        expect(fetch).toHaveBeenCalledWith('https://fakestoreapi.com/users/21', {
+            method: 'PUT',
             body: JSON.stringify({
                 email: 'jd@example.com', 
                 username: "ex@mpleMan", 
                 password: "p@$$w0rD", 
                 name: {
-                    firstname: 'Jimmy',
+                    firstname: 'James',
                     lastname: 'Dean',
                 },
                 address: {
