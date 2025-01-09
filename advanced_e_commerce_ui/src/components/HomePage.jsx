@@ -23,7 +23,7 @@ function HomePage() {
             <h1>Welcome, {userName} !</h1>
             <NavLink to='/logout'>Logout</NavLink>
             <br />
-            <NavLink to="/cart">{ cartCount > 0 ? "Your cart has {cartCount} item(s)." : "Your cart is empty." }</NavLink>
+            <NavLink to="/cart">{ cartCount > 0 ? `Your cart has ${cartCount} item(s).` : "Your cart is empty." }</NavLink>
             <ProductCatalog />
         </Container>
     );
