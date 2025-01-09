@@ -9,7 +9,7 @@ function Logout() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        localStorage.removeItem('userSession');
+        sessionStorage.removeItem('userSession');
         dispatch(deleteUser(user))
         navigate('/');
         console.log('Logging out...')

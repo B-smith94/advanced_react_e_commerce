@@ -50,7 +50,7 @@ const Login = () => {
         if (user) {
             setLoginError(null);
             setShowSuccessModal(true);
-            localStorage.setItem('userSession', JSON.stringify(user));
+            sessionStorage.setItem('userSession', JSON.stringify(user));
             console.log('Logged-in user:', user)
         } else {
             setLoginError("Invalid username or password.")

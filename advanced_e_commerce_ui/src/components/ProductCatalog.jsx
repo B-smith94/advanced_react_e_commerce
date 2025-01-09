@@ -7,6 +7,8 @@ import React, { useState, useMemo } from 'react';
 const ProductCatalog = () => {
     const dispatch = useDispatch(); 
     const [category, setCategory] = useState('');
+    const [title, setTitle] = useState('');
+    const [price, setPrice] = useState({min: '', max: ''});
 
     const fetchProducts = async () => {
         const response = await fetch('https://fakestoreapi.com/products');
@@ -16,7 +18,7 @@ const ProductCatalog = () => {
         const products = await response.json();
         return products;
     }
-
+    // runs fetchProducts automatically, stores the data in the 'products' state, and sets parameters for when to rerun the function
     const { data: products, isLoading, error } = useQuery({ 
         queryKey: ['products'], 
         queryFn: fetchProducts,
@@ -27,15 +29,23 @@ const ProductCatalog = () => {
         staleTime: 5 * 60 * 1000, 
         cacheTime: 15 * 60 * 1000 
     });
-
+    // Adds items to the cart
     const handleAddToCart = (id) => {
         dispatch(addItem({ id }));
     };
-
-    const filterByCategory = useMemo(() => {
-        if (!category) return products;
-        return products.filter((product) => product.category === category);
-    }, [products, category])
+    // Search and filter functions
+    const filterProducts = useMemo(() => {
+        if (!products) return [];
+        
+        return products.filter((product) => {
+            const matchCategory = category ? product.category === category : true;
+            const matchTitle = title ? product.title.toLowerCase().includes(title.toLowerCase()) : true;
+            const matchPrice = 
+                (price.min ? product.price >= Number(price.min) : true) && 
+                (price.max ? product.price <= Number(price.max) : true)
+            return matchCategory && matchTitle && matchPrice;
+        })
+    }, [products, category, title, price])
 
     if (isLoading) return <Spinner animation='border' role='status'><span className='visually-hidden'>Loading...</span></Spinner>;
     if (error) return <Alert variant='danger'>{error.message}</Alert>; 
@@ -58,9 +68,48 @@ const ProductCatalog = () => {
                     </Dropdown.Menu>
                 </Dropdown>
             </Form.Group>
-
+            <Form className='mb-2'>
+                <hr />
+                <h5>Search Products</h5>
+                <Row>
+                    <Col className='col-6'>
+                        <Form.Group>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                             type='text'
+                             placeholder='Enter the name of the product'
+                             name='title'
+                             value={title}
+                             onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col className='col-3'>
+                        <Form.Group>
+                            <Form.Label>Minimum Price</Form.Label>
+                            <Form.Control
+                             type='number'
+                             placeholder='Enter minimum price'
+                             value={price.min}
+                             onChange={(e) => setPrice((prevPrice) => ({...prevPrice, min: e.target.value}))}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col className='col-3'>
+                        <Form.Group>
+                            <Form.Label>Maximum Price</Form.Label>
+                            <Form.Control
+                             type='number'
+                             placeholder='Enter maximum price'
+                             value={price.max}
+                             onChange={(e) => setPrice((prevPrice) => ({...prevPrice, max: e.target.value}))}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+            </Form>
             <Row xs={1} md={4} className='g-4'>
-            {filterByCategory.map(product => (
+            {filterProducts.map(product => (
                 <Col key={product.id}>
                     <Card style={{ width: '18rem' }}>
                         <div style={{ padding: '10px' }}>
