@@ -1,81 +1,165 @@
 import React, { useState } from 'react';
+import { Form, Container, Button, Alert, Modal } from 'react-bootstrap';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+
 
 const CreateUserAccount = () => {
-    const [firstname, setFirstName] = useState('');
-    const [lastname, setLastName] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [city, setCity] = useState('');
-    const [street, setStreet] = useState('');
-    const [zipcode, setZipcode] = useState('');
+    const navigate = useNavigate();
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+    const queryClient = useQueryClient();
+
+    const postUserAccount = async (user) => {
+        const response = await fetch('https://fakestoreapi.com/users', {
+            method: "POST",
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        });
+        if (!response.ok) throw new Error('Failed to add new product');
+        return response.json();
+    }
+
+    const { mutate, isLoading, isError, error } = useMutation({
+        mutationFn: postUserAccount,
+        onSuccess: (data) => {
+            setShowSuccessModal(true);
+            console.log('User successfully added:', data.id);
+            queryClient.invalidateQueries(['UserAccounts']);
+        }
+    })
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const postData = {
-            email,
-            username,
-            password,
+        const formData = new FormData(e.target);
+        const userAccount = {
+            email: formData.get('email'),
+            username: formData.get('username'),
+            password: formData.get('password'),
             name: {
-                firstname,
-                lastname,
+                firstname: formData.get('firstname'),
+                lastname: formData.get('lastname'),
             },
             address: {
-                city,
-                street,
-                zipcode: zipcode.toString()
+                city: formData.get('city'),
+                street: formData.get('street'),
+                zipcode: formData.get('zipcode').toString()
             },
-            phone,
+            phone: formData.get('phone'),
         };
+        
+        mutate(userAccount);
+        console.log("Submitting form with data:", userAccount);
+        e.target.reset();
+    }
 
-        try {
-            const response = await fetch('https://fakestoreapi.com/users', {
-                method: "POST",
-                body: JSON.stringify(postData),
-                headers: {'Content-Type': 'application/json; charset=UTF-8'},
-            });
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.error('Error creating account:', error);
-        }
-
-        console.log("Submitting form with data:", postData);
+    const handleClose = () => {
+        setShowSuccessModal(false);
+        navigate('/')
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="firstname">First Name</label>
-            <input type="text" id="firstname" value={firstname} onChange={(e) => setFirstName(e.target.value)} />
-            
-            <label htmlFor="lastname">Last Name</label>
-            <input type="text" id="lastname" value={lastname} onChange={(e) => setLastName(e.target.value)} />
-
-            <label htmlFor="username">Username</label>
-            <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-
-            <label htmlFor="password">Password</label>
-            <input type="text" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-            <label htmlFor="email">Email</label>
-            <input type="text" id="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-
-            <label htmlFor="phone">Phone</label>
-            <input type="text" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-
-            <label htmlFor="city">City</label>
-            <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} />
-
-            <label htmlFor="street">Street Address</label>
-            <input type="text" id="street" value={street} onChange={(e) => setStreet(e.target.value)} />
-
-            <label htmlFor="zipcode">Zip Code</label>
-            <input type="text" id="zipcode" value={zipcode} onChange={(e) => setZipcode(e.target.value)} />
-
-            <button type="submit">Create Account</button>
-        </form>
+        <Container>
+            {isError && <Alert variant='danger'>An error occurred: {error.message}</Alert>}
+            <h2>Make a User Account</h2>
+             <Form onSubmit={handleSubmit}>
+                <Form.Group controlId='firstname'>
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='firstname'
+                     placeholder='Enter your first name'
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='lastname'>
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='lastname'
+                     placeholder='Enter your last name'
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='username'>
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='username'
+                     placeholder='Enter your desired username'
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='password'>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                     type="password"  
+                     name='password'
+                     placeholder='Enter your password'
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='email'>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='email'
+                     placeholder='Enter your email address'
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='phone'>
+                    <Form.Label>Phone</Form.Label>
+                    <Form.Control
+                     type="tel" 
+                     name='phone'
+                     placeholder='Enter your phone number'
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='city'>
+                    <Form.Label>City</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='city'
+                     placeholder='Enter your home city'
+                     required
+                    />
+                </Form.Group>
+                <Form.Group controlId='street'>
+                    <Form.Label>Street Address</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='street'
+                     placeholder='Enter your street address'
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='zipcode'>
+                    <Form.Label>Zip Code</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='zipcode'
+                     placeholder='Enter zip code'
+                     required 
+                    />
+                </Form.Group>
+                <Button variant='primary' type="submit" disabled={isLoading}>
+                    {isLoading ? 'Finalizing...' : 'Create Account'}
+                </Button>
+            </Form>
+            <Modal show={showSuccessModal} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Creation Successful!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Account creation successful. Happy shopping!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant='secondary' onClick={handleClose}>
+                        Go to Login
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
     )
 }
 
