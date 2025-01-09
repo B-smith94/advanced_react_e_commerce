@@ -22,7 +22,20 @@ const productsSlice = createSlice({
         status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
         error: null,
     },
-    reducers: {},
+    reducers: {
+        sortProducts: (state, action) => {
+            const criteria = action.payload;
+            if (criteria === 'Price asc.') {
+                state.items.sort((a, b) => a.price - b.price);
+            } else if (criteria === 'Price desc.') {
+                state.items.sort((a, b) => b.price - a.price);
+            } else if (criteria === 'Title') {
+                state.items.sort((a, b) => a.title.localeCompare(b.title))
+            } else if (criteria === 'Category') {
+                state.items.sort((a, b) => a.category.localeCompare(b.category))
+            }
+        }
+    },
     extraReducers: (builder) => { // builder responds to actions not created within slice (fetchProducts in this case)
         builder // redux tells builder which status fetchProducts is on and runs the requisite code (under the hood stuff)
             .addCase(fetchProducts.pending, (state) => {
@@ -39,5 +52,7 @@ const productsSlice = createSlice({
             });
     },
 });
+
+export const { sortProducts } = productsSlice.actions;
 
 export default productsSlice.reducer;

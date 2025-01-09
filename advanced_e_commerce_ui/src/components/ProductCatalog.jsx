@@ -2,13 +2,18 @@ import { useDispatch } from 'react-redux';
 import { addItem } from '../features/cart/cartSlice';
 import { Card, Button, Row, Col, Spinner, Alert, Dropdown, Form } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import { sortProducts } from '../features/products/productsSlice';
 
 const ProductCatalog = () => {
     const dispatch = useDispatch(); 
     const [category, setCategory] = useState('');
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState({min: '', max: ''});
+    const [criteria, setCriteria] = useState('')
+
+
+    const handleSortProducts = useCallback((criteria) => dispatch(sortProducts(criteria)), [dispatch]);
 
     const fetchProducts = async () => {
         const response = await fetch('https://fakestoreapi.com/products');
@@ -53,21 +58,38 @@ const ProductCatalog = () => {
     return (
         <div>
             <h2>Product Catalog</h2> 
-            <Form.Group>
-                <Dropdown className='mb-2'>
-                    <Dropdown.Toggle id='dropdown-filter-category'>
-                        View by Category
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu aria-labelledby='dropdown-filter-category'>
-                        <Dropdown.Item onClick={() => setCategory('')}>Show All</Dropdown.Item>
-                        {Array.from(new Set(products.map(product => product.category))).map((category) => (
-                            <Dropdown.Item key={category} onClick={() => setCategory(category)}>
-                                {category}
-                            </Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
-                </Dropdown>
-            </Form.Group>
+            <Row>
+                <Col>
+                    <Form.Group>
+                        <Dropdown className='mb-2'>
+                            <Dropdown.Toggle id='dropdown-filter-category'>
+                                Filter by {category}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu aria-labelledby='dropdown-filter-category'>
+                                <Dropdown.Item onClick={() => setCategory('')}>Show All</Dropdown.Item>
+                                {Array.from(new Set(products.map(product => product.category))).map((category) => (
+                                    <Dropdown.Item key={category} onClick={() => setCategory(category)}>
+                                        {category}
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </Form.Group>
+                    <Form.Group>
+                        <Dropdown className='mb-2'>
+                            <Dropdown.Toggle id='dropdown-sort'>
+                                Sort Products by {criteria}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu aria-labelledby='dropdown-sort'>
+                                <Dropdown.Item onClick={() => {setCriteria('Title'); handleSortProducts('Title')}}>Title</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Category'); handleSortProducts('Category')}}>Category</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price asc.'); handleSortProducts('Price asc.')}}>Price Asc.</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price desc.'); handleSortProducts('Price desc.')}}>Price Desc.</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </Form.Group>
+                </Col>
+            </Row>
             <Form className='mb-2'>
                 <hr />
                 <h5>Search Products</h5>
