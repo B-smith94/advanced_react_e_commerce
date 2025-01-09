@@ -14,7 +14,7 @@ const Login = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('userSession')
+        const storedUser = sessionStorage.getItem('userSession')
         if (storedUser) {
             const userSession = JSON.parse(storedUser);
             dispatch(addUser(userSession));

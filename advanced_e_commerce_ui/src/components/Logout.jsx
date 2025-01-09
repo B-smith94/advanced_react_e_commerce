@@ -11,8 +11,8 @@ function Logout() {
     useEffect(() => {
         sessionStorage.removeItem('userSession');
         dispatch(deleteUser(user))
+        console.log('Logging out...');
         navigate('/');
-        console.log('Logging out...')
     }, [navigate, dispatch]);
 
     return (
