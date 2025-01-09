@@ -33,7 +33,7 @@ beforeEach(() => {
     fetch.mockClear();
 });
 
-describe('Update User Account Component', () => {
+describe('Update User Account Component', () => { // integration test for UpdateUser
     test('user account is updated upon submission', async () => {
         render(<UpdateUserAccount />)
 
@@ -70,5 +70,17 @@ describe('Update User Account Component', () => {
             }),
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
+    });
+    // unit test for button to delete a user account
+    test('user data is deleted upon clicking the delete button', async () => {
+        render(<UpdateUserAccount />)
+
+        fireEvent.click(screen.getByText(/Delete Account/i));
+
+        await waitFor(() => {
+            expect(fetch).toHaveBeenCalledWith('https://fakestoreapi.com/users/21', {
+                method: 'DELETE',
+            })
+        });
     })
 })

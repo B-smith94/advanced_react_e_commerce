@@ -43,6 +43,19 @@ const UpdateUserAccount = () => {
         }
     };
 
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        try {
+            const response = fetch('https://fakestoreapi.com/users/21', {
+            method: 'DELETE',
+            });
+            const data = await response.json();
+            console.log("data deleted:", data);
+        } catch (error) {
+            console.error('Error deleting account:', error);
+        }
+    } 
+
     return (
         <form onSubmit={handleSubmit}>
             <label htmlFor="firstname">First Name</label>
@@ -73,6 +86,7 @@ const UpdateUserAccount = () => {
             <input type="text" id="zipcode" value={zipcode} onChange={(e) => setZipcode(e.target.value)} required />
             
             <button type="submit">Update Account</button>
+            <button onClick={handleDelete}>Delete Account</button>
         </form>
     )
 }
