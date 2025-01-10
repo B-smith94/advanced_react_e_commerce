@@ -47,7 +47,7 @@ The Login Page contains the Navigation Bar; a form for entering in your username
 The program compares your credentials to ones stored on their database, and if they match, it will grant you access to the rest of the program.
 
 ## 4. Create User Account Page
-![createaccount](https://github.com/user-attachments/assets/4d49ba74-207a-403d-aba1-7a28e8b94039)
+![createaccount](https://github.com/user-attachments/assets/145f979b-9c0a-47a5-9284-04bbcba8096a)
 
 The Create User Account Page contains a form for you to enter in your account information. This includes:
 
@@ -94,6 +94,7 @@ If you would like to view your past orders, click the Order History tab on the N
 Order ID, Order Date, and Total Cost, but if you would like to view individual products and their details, click on the View Details button on each order.
 
 ## 8. Update User Account Page
+![update_account](https://github.com/user-attachments/assets/07f9faf1-f2fb-4aea-861e-d96f0dee323d)
 
 The Update User Account Page is structured much like the Create User Account page, for simplicity. It will automatically fill in the details of your account, where you can change details like your 
 email address, phone number, username, and password. 
