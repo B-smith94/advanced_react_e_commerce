@@ -4,6 +4,8 @@ import { Card, Button, Row, Col, Spinner, Alert, Dropdown, Form } from 'react-bo
 import { useQuery } from '@tanstack/react-query';
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { sortProducts, setProducts } from '../features/products/productsSlice';
+import '../i18n';
+import { useTranslation } from 'react-i18next';
 
 const ProductCatalog = () => {
     const dispatch = useDispatch(); 
@@ -12,6 +14,7 @@ const ProductCatalog = () => {
     const [price, setPrice] = useState({min: '', max: ''});
     const [criteria, setCriteria] = useState('')
     const products = useSelector((state) => state.products.items);
+    const [t] = useTranslation();
 
     const handleSortProducts = useCallback((criteria) => dispatch(sortProducts(criteria)), [dispatch]);
     const handleSetProducts = useCallback((productsList) => dispatch(setProducts(productsList)), [dispatch]);
@@ -70,16 +73,16 @@ const ProductCatalog = () => {
 
     return (
         <div>
-            <h2>Product Catalog</h2> 
+            <h2>{t('catalog')}</h2> 
             <Row>
                 <Col>
                     <Form.Group>
                         <Dropdown className='mb-2' role='menu'>
                             <Dropdown.Toggle id='dropdown-filter-category'>
-                                Filter by {category}
+                                {t('filter')} {category}
                             </Dropdown.Toggle>
                             <Dropdown.Menu aria-labelledby='dropdown-filter-category'>
-                                <Dropdown.Item onClick={() => setCategory('')} role='menuitem'>Show All</Dropdown.Item>
+                                <Dropdown.Item onClick={() => setCategory('')} role='menuitem'>{t('showAll')}</Dropdown.Item>
                                 {Array.from(new Set(products.map(product => product.category))).map((category) => (
                                     <Dropdown.Item key={category} onClick={() => setCategory(category)} role='menuitem'>
                                         {category}
@@ -91,13 +94,13 @@ const ProductCatalog = () => {
                     <Form.Group>
                         <Dropdown className='mb-2' role='menu'>
                             <Dropdown.Toggle id='dropdown-sort'>
-                                Sort Products by {criteria}
+                                {t("sortProducts")} {criteria}
                             </Dropdown.Toggle>
                             <Dropdown.Menu aria-labelledby='dropdown-sort'>
-                                <Dropdown.Item onClick={() => {setCriteria('Title'); handleSortProducts('Title')}} role='menuitem'>Title</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Category'); handleSortProducts('Category')}} role='menuitem'>Category</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Price asc.'); handleSortProducts('Price asc.')}} role='menuitem'>Price Asc.</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Price desc.'); handleSortProducts('Price desc.')}} role='menuitem'>Price Desc.</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Title'); handleSortProducts('Title')}} role='menuitem'>{t('productTitle')}</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Category'); handleSortProducts('Category')}} role='menuitem'>{t('productCat')}</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price asc.'); handleSortProducts('Price asc.')}} role='menuitem'>{t('priceAsc')}</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price desc.'); handleSortProducts('Price desc.')}} role='menuitem'>{t('priceDesc')}</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Form.Group>
@@ -105,14 +108,14 @@ const ProductCatalog = () => {
             </Row>
             <Form className='mb-2' role='form'>
                 <hr />
-                <h5>Search Products</h5>
+                <h5>{t('searchProducts')}</h5>
                 <Row>
                     <Col className='col-6'>
                         <Form.Group controlId='productName'>
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>{t('productName')}</Form.Label>
                             <Form.Control
                              type='text'
-                             placeholder='Enter the name of the product'
+                             placeholder={t('searchPlaceholder')}
                              name='title'
                              value={title}
                              onChange={(e) => setTitle(e.target.value)}
@@ -122,10 +125,10 @@ const ProductCatalog = () => {
                     </Col>
                     <Col className='col-3'>
                         <Form.Group controlId='priceMin'>
-                            <Form.Label>Minimum Price</Form.Label>
+                            <Form.Label>{t('minPrice')}</Form.Label>
                             <Form.Control
                              type='number'
-                             placeholder='Enter minimum price'
+                             placeholder={t('minPricePlaceholder')}
                              value={price.min}
                              onChange={(e) => setPrice((prevPrice) => ({...prevPrice, min: e.target.value}))}
                              aria-describedby='priceMin'
@@ -134,10 +137,10 @@ const ProductCatalog = () => {
                     </Col>
                     <Col className='col-3'>
                         <Form.Group controlId='priceMax'>
-                            <Form.Label>Maximum Price</Form.Label>
+                            <Form.Label>{t('maxPrice')}</Form.Label>
                             <Form.Control
                              type='number'
-                             placeholder='Enter maximum price'
+                             placeholder={t('maxPricePlaceholder')}
                              value={price.max}
                              onChange={(e) => setPrice((prevPrice) => ({...prevPrice, max: e.target.value}))}
                              aria-describedby='priceMax'
@@ -151,14 +154,14 @@ const ProductCatalog = () => {
                 <Col key={product.id}>
                     <Card style={{ width: '18rem' }} aria-labelledby='cardTitle' aria-describedby='cardDescription'>
                         <div style={{ padding: '10px' }}>
-                            <Card.Img variant='top' src={product.image} role='img' alt={`picture of ${product.title}`} style={{ height: '250px', objectFit: 'contain' }} />
+                            <Card.Img variant='top' src={product.image} role='img' alt={`${t('altImgTxt')} ${product.title}`} style={{ height: '250px', objectFit: 'contain' }} />
                         </div>
                         <Card.Body>
                             <Card.Title id='cardTitle'>{product.title}</Card.Title>
-                            <Card.Text><b>Category:</b> {product.category}</Card.Text>
+                            <Card.Text><b>{t('productCat')}:</b> {product.category}</Card.Text>
                             <Card.Text id='cardDescription'>{product.description}</Card.Text>
-                            <Card.Text><b>Price:</b> ${product.price}</Card.Text>
-                            <Button variant='primary' onClick={() => handleAddToCart(product.id)}>Add to Cart</Button>
+                            <Card.Text><b>{t('productPrice')}:</b> ${product.price}</Card.Text>
+                            <Button variant='primary' onClick={() => handleAddToCart(product.id)}>{t('addToCart')}</Button>
                         </Card.Body>
                     </Card>
                 </Col>

@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import NavBar from "./NavBar";
-
+import '../i18n';
+import { useTranslation } from 'react-i18next';
 import { NavLink } from "react-router-dom";
 
 function HomePage() {
@@ -12,6 +13,7 @@ function HomePage() {
     const user = useSelector((state) => state.userAccount.user)
     const navigate = useNavigate();
     const userName = user ? user.user.name.firstname : "";
+    const [t] = useTranslation();
     console.log(user)
 
     useEffect(() => {
@@ -23,9 +25,9 @@ function HomePage() {
     return (
         <Container className="mt-5">
             <NavBar />
-            <h1>Welcome, {userName}!</h1>
+            <h1>{t('welcomeMessage')}, {userName}!</h1>
             <hr />
-            <NavLink to="/cart" role="link">{ cartCount > 0 ? `Your cart has ${cartCount} item(s).` : "Your cart is empty." }</NavLink>
+            <NavLink to="/cart" role="link">{ cartCount > 0 ? `${t('cartCount')} ${cartCount} ${t('items')}.` : t("emptyCart") }</NavLink>
             <ProductCatalog />
         </Container>
     );

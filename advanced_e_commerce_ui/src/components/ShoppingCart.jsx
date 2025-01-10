@@ -6,6 +6,8 @@ import { Button, ListGroup, Modal } from 'react-bootstrap';
 import { useQueries } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
+import '../i18n';
+import { useTranslation } from 'react-i18next';
 
 const ShoppingCart = () => {
     const cart = useSelector((state) => state.cart); 
@@ -13,7 +15,7 @@ const ShoppingCart = () => {
     const dispatch = useDispatch(); 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const navigate = useNavigate()
-   
+    const [t] = useTranslation();
     const handleAddItem = useCallback((id) => dispatch(addItem({ id })), [dispatch]);
     const handleRemoveItem = useCallback((id) => dispatch(removeItem({ id })), [dispatch]);
     const handleCheckout = useCallback(() => {
@@ -68,33 +70,33 @@ const ShoppingCart = () => {
     return (
         <div>
             <NavBar />
-            <h2>Shopping Cart</h2>
+            <h2>{t('shoppingCart')}</h2>
             <ListGroup role='list'> 
                 {totalPrice > 0 ? Object.entries(cart.items).map(([id, quantity]) => (
                     <ListGroup.Item key={id} className='d-flex justify-content-between align-items-center' role='listitem'>
-                        <span>{productNames[id]}  - Quantity: {quantity}</span>
+                        <span>{productNames[id]}  - {t('productQuantity')}: {quantity}</span>
                         <div>
                             <Button variant='light' className='me-1' onClick={() => handleAddItem(id)} role='button'>+</Button>
                             <Button variant='light' className='me-1' onClick={() => handleRemoveItem(id)} role='button'>-</Button>
-                            <Button variant='danger' onClick={() => handleDeleteItem(id)} role='button'>Remove from Cart</Button>
+                            <Button variant='danger' onClick={() => handleDeleteItem(id)} role='button'>{t('removeFromCart')}</Button>
                         </div>
                     </ListGroup.Item>
-                )): "Shopping cart is empty."}
+                )): t("emptyCart")}
             </ListGroup>
-            <p>Total Items: {cart.totalItems}</p>
-            <p>Total Price: ${totalPrice.toFixed(2)}</p> 
-            <Button variant='primary' onClick={handleCheckout} role='button'>Checkout</Button>
+            <p>{t('totalItems')}: {cart.totalItems}</p>
+            <p>{t('totalPrice')}: ${totalPrice.toFixed(2)}</p> 
+            <Button variant='primary' onClick={handleCheckout} role='button'>{t('checkout')}</Button>
             <Link to={'/home'}>
-                <Button variant='secondary' className='ms-2' role='link'>Return to Home</Button>
+                <Button variant='secondary' className='ms-2' role='link'>{t('returnToHome')}</Button>
             </Link>
             <Modal show={showSuccessModal} onHide={handleClose} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title id='modalTitle'>All Checked Out!</Modal.Title>
+                    <Modal.Title id='modalTitle'>{t("doneCheckout")}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body id='modalDescription'>Product has been successfully checked out!</Modal.Body>
+                <Modal.Body id='modalDescription'>{t('checkoutMessage')}</Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={handleClose} role='button'>
-                        Return to Product Catalog
+                        {t('returnToCatalog')}
                     </Button>
                 </Modal.Footer>
             </Modal>

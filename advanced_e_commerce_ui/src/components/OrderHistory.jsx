@@ -3,7 +3,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Container, ListGroup, Button, Alert, Spinner } from "react-bootstrap";
-
+import '../i18n';
+import { useTranslation } from 'react-i18next';
 import NavBar from "./NavBar";
 
 const OrderHistory = () => {
@@ -11,6 +12,7 @@ const OrderHistory = () => {
     const user = useSelector((state) => state.userAccount.user)
     const products = useSelector((state) => state.products.items)
     const [expandedCartId, setExpandedCartId] = useState(null);
+    const [t] = useTranslation();
 
     useEffect(() => {
         if (!user) {
@@ -71,18 +73,18 @@ const OrderHistory = () => {
     return (
         <Container>
             <NavBar />
-            <h2>Order History</h2>
+            <h2>{t('orderHistory')}</h2>
             <ListGroup role="list">
                 {carts && carts.length > 0 ? (
                     carts.map((cart) => {
                         const totalPrice = calculateCartTotal(cart.products);
                         return (
                         <ListGroup.Item key={cart.id} className="p-3" role="listitem">
-                            <strong>Cart ID:</strong> {cart.id} - 
-                            <strong> Order Date:</strong> {cart.date} -  
-                            <strong> Total Price: </strong>${totalPrice.toFixed(2)}
+                            <strong>{t('cartId')}:</strong> {cart.id} - 
+                            <strong> {t('orderDate')}:</strong> {cart.date} -  
+                            <strong> {t('totalPrice')}: </strong>${totalPrice.toFixed(2)}
                             <Button variant="light" role="button" className="m-2" onClick={() => toggleCartDetails(cart.id)}>
-                                {expandedCartId === cart.id ? 'Hide Details' : 'View Details'}    
+                                {expandedCartId === cart.id ? t('hideDetails') : t('viewDetails')}    
                             </Button> 
                             {expandedCartId === cart.id && (
                                 <ListGroup className="mt-3" role='list'>
@@ -91,13 +93,13 @@ const OrderHistory = () => {
                                         return (
                                             <ListGroup.Item key={product.productId} role="listitem">
                                                 <div>
-                                                    <strong>Product Name:</strong> {productDetails?.title || 'Unknown'}
+                                                    <strong>{t('productName')}:</strong> {productDetails?.title || t('unknown')}
                                                 </div>
                                                 <div>
-                                                    <strong>Price:</strong> ${productDetails?.price || 'Unknown'}
+                                                    <strong>{t('productPrice')}:</strong> ${productDetails?.price || t('unknown')}
                                                 </div>
                                                 <div>
-                                                    <strong>Quantity:</strong> {product.quantity}
+                                                    <strong>{t('productQuantity')}:</strong> {product.quantity}
                                                 </div>
                                             </ListGroup.Item>
                                         );
@@ -106,7 +108,7 @@ const OrderHistory = () => {
                             )} 
                         </ListGroup.Item>
                     )})
-                ) : 'No orders found'}
+                ) : t('noOrders')}
             </ListGroup>
         </Container>
     )

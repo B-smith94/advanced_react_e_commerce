@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Form, Container, Button, Alert, Modal, Spinner } from 'react-bootstrap';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import '../i18n';
+import { useTranslation } from 'react-i18next';
+import NavBar from './NavBar';
 
 
 const CreateUserAccount = () => {
@@ -9,6 +12,7 @@ const CreateUserAccount = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
     const queryClient = useQueryClient();
+    const [t] = useTranslation();
 
     const postUserAccount = async (user) => {
         const response = await fetch('https://fakestoreapi.com/users', {
@@ -62,112 +66,122 @@ mutate(userAccount);
 
     return (
         <Container>
-            {isError && <Alert variant='danger'>An error occurred: {error.message}</Alert>}
-            <h2>Make a User Account</h2>
+            {isError && <Alert variant='danger'>{t('errorMessage')}: {error.message}</Alert>}
+            <NavBar />
+            <h2>{t('createUserTitle')}</h2>
              <Form onSubmit={handleSubmit} role='form'>
                 <Form.Group controlId='firstname'>
-                    <Form.Label>First Name</Form.Label>
+                    <Form.Label>{t('firstName')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='firstname'
-                     placeholder='Enter your first name'
+                     placeholder={t('firstNamePlaceholder')}
                      aria-describedby='firstname'
+                     disabled={isLoading}
                      required  
                     />
                 </Form.Group>
                 <Form.Group controlId='lastname'>
-                    <Form.Label>Last Name</Form.Label>
+                    <Form.Label>{t('lastName')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='lastname'
-                     placeholder='Enter your last name'
+                     placeholder={t('lastNamePlaceholder')}
                      aria-describedby='lastname'
+                     disabled={isLoading}
                      required 
                     />
                 </Form.Group>
                 <Form.Group controlId='username'>
-                    <Form.Label>Username</Form.Label>
+                    <Form.Label>{t('username')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='username'
-                     placeholder='Enter your desired username'
+                     placeholder={t('usernamePlaceholder')}
                      aria-describedby='username'
+                     disabled={isLoading}
                      required  
                     />
                 </Form.Group>
                 <Form.Group controlId='password'>
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label>{t('password')}</Form.Label>
                     <Form.Control
                      type="password"  
                      name='password'
-                     placeholder='Enter your password'
+                     placeholder={t('passwordPlaceholder')}
                      aria-describedby='password'
+                     disabled={isLoading}
                      required  
                     />
                 </Form.Group>
                 <Form.Group controlId='email'>
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>{t('email')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='email'
-                     placeholder='Enter your email address'
+                     placeholder={t('emailPlaceholder')}
                      aria-describedby='email'
+                     disabled={isLoading}
                      required 
                     />
                 </Form.Group>
                 <Form.Group controlId='phone'>
-                    <Form.Label>Phone</Form.Label>
+                    <Form.Label>{t('phone')}</Form.Label>
                     <Form.Control
                      type="tel" 
                      name='phone'
-                     placeholder='Enter your phone number'
+                     placeholder={t('phonePlaceholder')}
                      aria-describedby='phone'
+                     disabled={isLoading}
                      required 
                     />
                 </Form.Group>
                 <Form.Group controlId='city'>
-                    <Form.Label>City</Form.Label>
+                    <Form.Label>{t('city')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='city'
-                     placeholder='Enter your home city'
+                     placeholder={t('cityPlaceholder')}
                      aria-describedby='city'
+                     disabled={isLoading}
                      required
                     />
                 </Form.Group>
                 <Form.Group controlId='street'>
-                    <Form.Label>Street Address</Form.Label>
+                    <Form.Label>{t('street')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='street'
-                     placeholder='Enter your street address'
+                     placeholder={t('streetPlaceholder')}
                      aria-describedby='street'
+                     disabled={isLoading}
                      required 
                     />
                 </Form.Group>
                 <Form.Group controlId='zipcode'>
-                    <Form.Label>Zip Code</Form.Label>
+                    <Form.Label>{t('zipcode')}</Form.Label>
                     <Form.Control
                      type="text" 
                      name='zipcode'
-                     placeholder='Enter zip code'
+                     placeholder={t('zipcodePlaceholder')}
                      aria-describedby='zipcode'
+                     disabled={isLoading}
                      required 
                     />
                 </Form.Group>
                 <Button variant='primary' className='m-2' type="submit" disabled={isLoading} role='button'>
-                    {isLoading ? <Spinner animation='border' size='sm' /> : 'Create Account'}
+                    {isLoading ? <Spinner animation='border' size='sm' /> : t('createAccount')}
                 </Button>
-                <Button variant='secondary' className='m-2' onClick={() => navigate('/')} role='button'>Return to Login</Button>
+                <Button variant='secondary' className='m-2' onClick={() => navigate('/')} role='button'>{t('returnToLogin')}</Button>
             </Form>
             <Modal show={showSuccessModal} onHide={handleClose} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title id='modalTitle'>Creation Successful!</Modal.Title>
+                    <Modal.Title id='modalTitle'>{t('createSuccess')}!</Modal.Title>
                 </Modal.Header>
-                <Modal.Body id='modalDescription'>Account creation successful. Happy shopping!</Modal.Body>
+                <Modal.Body id='modalDescription'>{t('accountCreateSuccess')}</Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={handleClose}>
-                        Go to Login
+                        {t('goToLogin')}
                     </Button>
                 </Modal.Footer>
             </Modal>
