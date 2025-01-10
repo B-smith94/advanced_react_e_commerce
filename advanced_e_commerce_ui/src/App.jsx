@@ -8,6 +8,7 @@ import Logout from './components/Logout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CreateUserAccount from './components/CreateUserAccount.jsx';
 import UpdateUserAccount from './components/UpdateUserAccount.jsx';
+import OrderHistory from './components/OrderHistory.jsx';
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path='/logout' element={<Logout />} />
         <Route path='/add-account' element={<CreateUserAccount />} />
         <Route path='/update-account' element={<UpdateUserAccount />} />
+        <Route path='/order-history' element={<OrderHistory />} />
       </Routes>
     </QueryClientProvider>  
 

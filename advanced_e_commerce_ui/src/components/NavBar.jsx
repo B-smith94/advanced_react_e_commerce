@@ -14,7 +14,8 @@ const NavBar = () => {
                         <Nav.Link as={NavLink} to='/home' role='menuitem'>Home</Nav.Link>
                         <Nav.Link as={NavLink} to='/update-account' role='menuitem'>Update Account Information</Nav.Link>
                         <Nav.Link as={NavLink} to='/cart' role='menuitem'>View Cart</Nav.Link>
-                        <Nav.Link as={NavLink} to='/logout' role='menuitem'><Logout /></Nav.Link>
+                        <Nav.Link as={NavLink} to={'/order-history'} role='menuitem'>Order History</Nav.Link>
+                        <Logout />
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
