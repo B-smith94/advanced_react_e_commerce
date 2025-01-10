@@ -6,14 +6,13 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 import NavBar from './NavBar';
 
-
 const CreateUserAccount = () => {
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
     const queryClient = useQueryClient();
     const [t] = useTranslation();
-
+    // fetches data from the api
     const postUserAccount = async (user) => {
         const response = await fetch('https://fakestoreapi.com/users', {
             method: "POST",
@@ -23,7 +22,7 @@ const CreateUserAccount = () => {
         if (!response.ok) throw new Error('Failed to add new user account');
         return response.json();
     }
-
+    // uses ReactQuery to update a state of User Accounts that contains all user accounts
     const { mutate, isError, error } = useMutation({
         mutationFn: postUserAccount,
         onSuccess: (data) => {
@@ -33,7 +32,7 @@ const CreateUserAccount = () => {
             queryClient.invalidateQueries(['userAccounts']);
         }
     })
-
+    // adds the new information to the userAccounts state via mutation
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -54,11 +53,11 @@ const CreateUserAccount = () => {
             phone: formData.get('phone'),
         };
         
-mutate(userAccount);                
+        mutate(userAccount);                
         console.log("Submitting form with data:", userAccount);
         e.target.reset();
     }
-
+    // Sets up modal
     const handleClose = () => {
         setShowSuccessModal(false);
         navigate('/')

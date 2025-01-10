@@ -33,7 +33,7 @@ beforeEach(() => {
     fetch.mockClear();
 });
 
-describe('CreateUserAccount Component', () => {
+describe('CreateUserAccount Component', () => { // integration test for CreateUser
     test('adds new user to the database upon submit', async () => {
         render(<CreateUserAccount />)
 

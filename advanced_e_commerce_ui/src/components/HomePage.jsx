@@ -15,13 +15,13 @@ function HomePage() {
     const userName = user ? user.user.name.firstname : "";
     const [t] = useTranslation();
     console.log(user)
-
+    // if no one is logged in, takes you back to the login page immediately
     useEffect(() => {
         if (!user) {
             return navigate("/")
         } 
     }, [user, navigate])
-
+    // displays the navbar, product catalog, and cart count, along with a personalized welcome message
     return (
         <Container className="mt-5">
             <NavBar />

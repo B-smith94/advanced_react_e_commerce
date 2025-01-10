@@ -12,9 +12,9 @@ function Logout() {
     const [t] = useTranslation();
 
     const handleLogout = () => {
-        localStorage.removeItem('userSession');
-        dispatch(logOut());
-        navigate('/');
+        localStorage.removeItem('userSession'); // removes user data from the user session
+        dispatch(logOut()); // updates the redux state
+        navigate('/'); // navigates back to login
     };
 
     return (

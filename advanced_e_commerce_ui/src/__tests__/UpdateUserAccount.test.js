@@ -33,7 +33,7 @@ beforeEach(() => {
     fetch.mockClear();
 });
 
-describe('Update User Account Component', () => { // integration test for UpdateUser
+describe('Update User Account Component', () => { // unit tests for UpdateUser
     test('user account is updated upon submission', async () => {
         render(<UpdateUserAccount />)
 
