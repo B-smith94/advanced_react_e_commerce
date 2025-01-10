@@ -1,22 +1,21 @@
-import {useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteUser } from "../features/userAccounts/userAccountsSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logOut } from "../features/userAccounts/userAccountsSlice";
+import { Button } from "react-bootstrap";
 
 function Logout() {
-    const user = useSelector((state) => state.userAccounts.accounts)
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    useEffect(() => {
+    const handleLogout = () => {
         sessionStorage.removeItem('userSession');
-        dispatch(deleteUser(user))
-        console.log('Logging out...');
+        dispatch(logOut());
         navigate('/');
-    }, [navigate, dispatch]);
+    };
 
     return (
-        <div>Logging out...</div>
+        <Button variant="danger" onClick={handleLogout}>Logout</Button>
     );
 }
 

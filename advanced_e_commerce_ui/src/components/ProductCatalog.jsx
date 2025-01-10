@@ -1,9 +1,9 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../features/cart/cartSlice';
 import { Card, Button, Row, Col, Spinner, Alert, Dropdown, Form } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState, useMemo, useCallback } from 'react';
-import { sortProducts } from '../features/products/productsSlice';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { sortProducts, setProducts } from '../features/products/productsSlice';
 
 const ProductCatalog = () => {
     const dispatch = useDispatch(); 
@@ -11,9 +11,10 @@ const ProductCatalog = () => {
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState({min: '', max: ''});
     const [criteria, setCriteria] = useState('')
-
+    const products = useSelector((state) => state.products.items);
 
     const handleSortProducts = useCallback((criteria) => dispatch(sortProducts(criteria)), [dispatch]);
+    const handleSetProducts = useCallback((productsList) => dispatch(setProducts(productsList)), [dispatch]);
 
     const fetchProducts = async () => {
         const response = await fetch('https://fakestoreapi.com/products');
@@ -24,7 +25,7 @@ const ProductCatalog = () => {
         return products;
     }
     // runs fetchProducts automatically, stores the data in the 'products' state, and sets parameters for when to rerun the function
-    const { data: products, isLoading, error } = useQuery({ 
+    const { data: apiProducts, isLoading, error } = useQuery({ 
         queryKey: ['products'], 
         queryFn: fetchProducts,
         refetchOnReconnect: true, 
@@ -34,6 +35,12 @@ const ProductCatalog = () => {
         staleTime: 5 * 60 * 1000, 
         cacheTime: 15 * 60 * 1000 
     });
+
+    useEffect(() => {
+        if (apiProducts) {
+            handleSetProducts(apiProducts);
+        }
+    }, [apiProducts, dispatch]);
     // Adds items to the cart
     const handleAddToCart = (id) => {
         dispatch(addItem({ id }));

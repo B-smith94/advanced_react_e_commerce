@@ -1,70 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Alert, Modal } from 'react-bootstrap';
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from 'react-router-dom';
-import { addUser } from '../features/userAccounts/userAccountsSlice';
-import { useDispatch } from 'react-redux';
+import { logIn, setError } from '../features/userAccounts/userAccountsSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const storedUser = sessionStorage.getItem('userSession')
-        if (storedUser) {
-            const userSession = JSON.parse(storedUser);
-            dispatch(addUser(userSession));
-        }
-    }, [dispatch])
-
-    const fetchUserAccounts = async () => {
-        const response = await fetch('https://fakestoreapi.com/users');
-        if (!response.ok) {
-            throw new Error ('Failed to fetch users');
-        }
-        console.log('Usernames successfully retrieved')
-        return response.json();
-    };
-
-    const { data: userAccounts, isLoading, error } = useQuery({
-        queryKey: ['userAccounts'],
-        queryFn: fetchUserAccounts,
-        refetchOnReconnect: true, 
-        refetchOnWindowFocus: true, 
-        retry: 3, 
-        retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-        staleTime: 5 * 60 * 1000, 
-        cacheTime: 15 * 60 * 1000 
-    })
-
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        const user = userAccounts.find(
-            (u) => u.username === username && u.password === password
-        );
+        setIsLoading(true);
+        try {
+            const response = await fetch('https://fakestoreapi.com/users');
+            if (!response.ok) throw new Error('Failed to fetch users');
 
-        if (user) {
+            const users = await response.json();
+            const user = users.find((user) => user.username === username) ;
+
+            if (!user || user.password !== password) throw new Error('Invalid username or password');
+
+            dispatch(logIn({ user }));
             setLoginError(null);
             setShowSuccessModal(true);
+
             sessionStorage.setItem('userSession', JSON.stringify(user));
-            console.log('Logged-in user:', user)
-        } else {
-            setLoginError("Invalid username or password.")
-            console.log("Invalid username or password")
+        } catch(error) {
+            setLoginError(error.message);
+            dispatch(setError(error.message));
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
     const handleClose = () => {
         setShowSuccessModal(false);
         navigate('/home');
     }
-
-    if (isLoading) return <Spinner animation='border' role='status'><span className='visually-hidden'>Loading...</span></Spinner>;
-    if (error) return <Alert variant='danger'>{error.message}</Alert>; 
 
     return (
         <Container className="vh-100">
@@ -93,9 +70,13 @@ const Login = () => {
                                 isInvalid={!!loginError}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="w-100">
-                            Login
+                        <Button variant="primary" type="submit" className="w-100" disabled={isLoading}>
+                            {isLoading? <Spinner animation='border' size='sm' /> : 'Login'}
                         </Button>
+                        <div className='mt-2'>
+                            <p>Or, if you need to make an account, <Button variant='light' onClick={() => navigate('/add-account')}>Click Here.</Button></p>
+                        </div>
+                       
                     </Form>
                 </Col>
             </Row>

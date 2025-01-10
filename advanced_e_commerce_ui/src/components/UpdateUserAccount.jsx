@@ -1,93 +1,260 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { Form, Container, Button, Alert, Modal, Spinner } from 'react-bootstrap';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import NavBar from './NavBar';
 
 const UpdateUserAccount = () => {
-    const [firstname, setFirstName] = useState('');
-    const [lastname, setLastName] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [city, setCity] = useState('');
-    const [street, setStreet] = useState('');
-    const [zipcode, setZipcode] = useState('');
+    const navigate = useNavigate();
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+    const user = useSelector((state) => state.userAccount.user.user);
+    const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+    const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+    const [formState, setFormState] = useState(user || {
+        name: {
+            firstname: '', 
+            lastname: ''
+        }, email: '',
+        password: '', 
+        username: '', 
+        phone: '', 
+        address: { 
+            city: '', 
+            street: '', 
+            zipcode: '' 
+        } 
+    }); 
 
-    handleSubmit = async (e) => {
-        e.preventDefault();
+    const queryClient = useQueryClient();
 
-        const postData = {
-            email,
-            username,
-            password,
-            name: {
-                firstname,
-                lastname,
-            },
-            address: {
-                city,
-                street,
-                zipcode,
-            },
-            phone,
-        };
+    console.log(user);
 
-        try {
-            const response = fetch('https://fakestoreapi.com/users/21', {
-                method: "PUT",
-                body: JSON.stringify(postData),
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            });
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.error('Error updating account:', error);
+    useEffect(() => {
+        if (!user) {
+            navigate('/'); 
         }
+    }, [user, navigate])
+
+    const putUserAccount = async () => {
+        setIsLoadingUpdate(true);
+        const response = await fetch(`https://fakestoreapi.com/users/${user.id}`, {
+            method: "PUT",
+            body: JSON.stringify(user),
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        })
+        if (!response.ok) throw new Error('Failed to update user account');
+        return response.json();
+    }
+
+    const deleteUserAccount = async (user) => {
+        setIsLoadingDelete(true);
+        const response = await fetch(`https://fakestoreapi.com/users/${user.id}`, {
+            method: "DELETE",
+        })
+        if (!response.ok) throw new Error('Failed to delete user account');
+        return response.json();
+    }
+
+    const { mutate: updateMutate, isError: isUpdateError, error: updateError } = useMutation({
+        mutationFn: putUserAccount,
+        onSuccess: (data) => {
+            setShowSuccessModal(true);
+            setIsLoadingUpdate(false);
+            console.log('User successfully added:', data.id);
+            queryClient.invalidateQueries(['userAccounts']);
+        }
+    })
+
+    const { mutate: deleteMutate, isError: isDeleteError, error: deleteError } = useMutation({
+        mutationFn: deleteUserAccount,
+        onSuccess: (data) => {
+            setIsLoadingDelete(false);
+            setShowDeleteModal(true);
+            console.log('User successfully deleted:', data.id);
+            queryClient.invalidateQueries(['userAccounts']);
+        }
+    })
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        updateMutate(formState);
+        console.log("Submitting form with data:", formState);
+        e.target.reset();
+    }
+    const handleDeleteClick = (e) => {
+        e.preventDefault();
+        setShowConfirmDeleteModal(true);
+    } 
+    const handleDeleteConfirm = async (e) => {
+        e.preventDefault();
+        deleteMutate(user);
+        setShowConfirmDeleteModal(false);
+    }
+
+    const handleDeleteCancel = () => {
+        setShowConfirmDeleteModal(false);
+    }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        const updatedUser = { ...formState }; 
+
+        if (name in updatedUser.name) updatedUser.name[name] = value;
+        else if (name in updatedUser.address) updatedUser.address[name] = value;
+        else updatedUser[name] = value;
+
+        setFormState(updatedUser);
     };
 
-    const handleDelete = async (e) => {
-        e.preventDefault();
-        try {
-            const response = fetch('https://fakestoreapi.com/users/21', {
-            method: 'DELETE',
-            });
-            const data = await response.json();
-            console.log("data deleted:", data);
-        } catch (error) {
-            console.error('Error deleting account:', error);
-        }
-    } 
+    const handleClose = () => {
+        setShowSuccessModal(false);
+        setShowDeleteModal(false);
+        navigate(showSuccessModal? '/home' : '/');
+    }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="firstname">First Name</label>
-            <input type="text" id="firstname" value={firstname} onChange={(e) => setFirstName(e.target.value)} required />
-            
-            <label htmlFor="lastname">Last Name</label>
-            <input type="text" id="lastname" value={lastname} onChange={(e) => setLastName(e.target.value)} required />
-            
-            <label htmlFor="username">Username</label>
-            <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            
-            <label htmlFor="password">Password</label>
-            <input type="text" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            
-            <label htmlFor="email">Email</label>
-            <input type="text" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            
-            <label htmlFor="phone">Phone</label>
-            <input type="text" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-            
-            <label htmlFor="city">city</label>
-            <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} required />
-            
-            <label htmlFor="street">Street Address</label>
-            <input type="text" id="street" value={street} onChange={(e) => setStreet(e.target.value)} required />
-            
-            <label htmlFor="zipcode">Zip Code</label>
-            <input type="text" id="zipcode" value={zipcode} onChange={(e) => setZipcode(e.target.value)} required />
-            
-            <button type="submit">Update Account</button>
-            <button onClick={handleDelete}>Delete Account</button>
-        </form>
+        <Container>
+            <NavBar />
+            {isUpdateError && <Alert variant='danger'>Failed to update account: {updateError.message}</Alert>}
+            {isDeleteError && <Alert variant='danger'>Failed to delete account: {deleteError.message}</Alert>}
+             <Form onSubmit={handleSubmit}>
+                <Form.Group controlId='firstname'>
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='firstname'
+                     placeholder='Enter your first name'
+                     value={formState.name.firstname}
+                     onChange={(e) => handleChange(e)}
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='lastname'>
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='lastname'
+                     placeholder='Enter your last name'
+                     value={formState.name.lastname}
+                     onChange={(e) => handleChange(e)}
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='username'>
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='username'
+                     placeholder='Enter your desired username'
+                     value={formState.username}
+                     onChange={(e) => handleChange(e)}
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='password'>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                     type="password"  
+                     name='password'
+                     placeholder='Enter your password'
+                     value={formState.password}
+                     onChange={(e) => handleChange(e)}
+                     required  
+                    />
+                </Form.Group>
+                <Form.Group controlId='email'>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='email'
+                     placeholder='Enter your email address'
+                     value={formState.email}
+                     onChange={(e) => handleChange(e)}
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='phone'>
+                    <Form.Label>Phone</Form.Label>
+                    <Form.Control
+                     type="tel" 
+                     name='phone'
+                     placeholder='Enter your phone number'
+                     value={formState.phone}
+                     onChange={(e) => handleChange(e)}
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='city'>
+                    <Form.Label>City</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='city'
+                     placeholder='Enter your home city'
+                     value={formState.address.city}
+                     onChange={(e) => handleChange(e)}
+                     required
+                    />
+                </Form.Group>
+                <Form.Group controlId='street'>
+                    <Form.Label>Street Address</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='street'
+                     placeholder='Enter your street address'
+                     value={formState.address.street}
+                     onChange={(e) => handleChange(e)}
+                     required 
+                    />
+                </Form.Group>
+                <Form.Group controlId='zipcode'>
+                    <Form.Label>Zip Code</Form.Label>
+                    <Form.Control
+                     type="text" 
+                     name='zipcode'
+                     placeholder='Enter zip code'
+                     value={formState.address.zipcode}
+                     onChange={(e) => handleChange(e)}
+                     required 
+                    />
+                </Form.Group>
+
+                <Button variant='primary' type="submit" className='m-2' disabled={isLoadingUpdate}>
+                    {isLoadingUpdate ? <Spinner animation='border' size='sm' /> : 'Update Account'}
+                </Button>
+
+                <Button variant='danger'  className='m-2' onClick={handleDeleteClick} disabled={isLoadingDelete}>
+                    {isLoadingDelete ? <Spinner animation='border' size='sm' /> : 'Delete Account'}
+                </Button>
+            </Form>
+
+            <Modal show={showSuccessModal || showDeleteModal} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{showSuccessModal? 'Update Successful!': 'Deletion Successful'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{showSuccessModal? 'Account update successful. Happy shopping!': "Account successfully deleted. We'll miss you!" }</Modal.Body>
+                <Modal.Footer>
+                    <Button variant='secondary' onClick={handleClose}>
+                        {showSuccessModal? 'Back to Home' : 'Go to Login'}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showConfirmDeleteModal} onHide={handleDeleteCancel}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Are you sure you want to delete your account?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    This action is irreversible.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='secondary' onClick={handleDeleteCancel}>Cancel</Button>
+                    <Button variant='danger' onClick={handleDeleteConfirm}>Delete</Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>         
     )
 }
 

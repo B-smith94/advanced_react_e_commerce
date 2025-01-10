@@ -7,10 +7,10 @@ import ShoppingCart from './components/ShoppingCart.jsx';
 import Logout from './components/Logout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CreateUserAccount from './components/CreateUserAccount.jsx';
+import UpdateUserAccount from './components/UpdateUserAccount.jsx';
 import './App.css'
 
 function App() {
-  const [user, setUser] = useState({ name: '', isLoggedIn: false })
   const queryClient = new QueryClient()
 
   return (                        
@@ -21,6 +21,7 @@ function App() {
         <Route path='/cart' element={<ShoppingCart />} />
         <Route path='/logout' element={<Logout />} />
         <Route path='/add-account' element={<CreateUserAccount />} />
+        <Route path='/update-account' element={<UpdateUserAccount />} />
       </Routes>
     </QueryClientProvider>  
 

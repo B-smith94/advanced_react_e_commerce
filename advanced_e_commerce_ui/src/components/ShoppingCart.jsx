@@ -5,6 +5,7 @@ import { addItem, removeItem, deleteItem, checkout } from '../features/cart/cart
 import { Button, ListGroup, Modal } from 'react-bootstrap';
 import { useQueries } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import NavBar from './NavBar';
 
 const ShoppingCart = () => {
     const cart = useSelector((state) => state.cart); 
@@ -66,6 +67,7 @@ const ShoppingCart = () => {
 
     return (
         <div>
+            <NavBar />
             <h2>Shopping Cart</h2>
             <ListGroup> 
                 {totalPrice > 0 ? Object.entries(cart.items).map(([id, quantity]) => (

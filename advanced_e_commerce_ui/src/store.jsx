@@ -5,7 +5,7 @@ import userAccountsReducer from './features/userAccounts/userAccountsSlice';
 
 export const store = configureStore({
     reducer: {
-        userAccounts: userAccountsReducer,
+        userAccount: userAccountsReducer,
         products: productReducer,
         cart: cartReducer, // cartSlice.reducer, handles state. Use dispatch(<action>) to call, cartReducer will find action that matches and perform that action
     },

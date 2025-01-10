@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Container, Button, Alert, Modal } from 'react-bootstrap';
+import { Form, Container, Button, Alert, Modal, Spinner } from 'react-bootstrap';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const CreateUserAccount = () => {
             body: JSON.stringify(user),
             headers: {'Content-Type': 'application/json; charset=UTF-8'},
         });
-        if (!response.ok) throw new Error('Failed to add new product');
+        if (!response.ok) throw new Error('Failed to add new user account');
         return response.json();
     }
 
@@ -25,7 +25,7 @@ const CreateUserAccount = () => {
         onSuccess: (data) => {
             setShowSuccessModal(true);
             console.log('User successfully added:', data.id);
-            queryClient.invalidateQueries(['UserAccounts']);
+            queryClient.invalidateQueries(['userAccounts']);
         }
     })
 
@@ -144,9 +144,10 @@ const CreateUserAccount = () => {
                      required 
                     />
                 </Form.Group>
-                <Button variant='primary' type="submit" disabled={isLoading}>
-                    {isLoading ? 'Finalizing...' : 'Create Account'}
+                <Button variant='primary' className='m-2' type="submit" disabled={isLoading}>
+                    {isLoading ? <Spinner animation='border' size='sm' /> : 'Create Account'}
                 </Button>
+                <Button variant='secondary' className='m-2' onClick={() => navigate('/')}>Return to Login</Button>
             </Form>
             <Modal show={showSuccessModal} onHide={handleClose}>
                 <Modal.Header closeButton>
