@@ -20,22 +20,22 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        try {
+        try { //fetches data from the api
             const response = await fetch('https://fakestoreapi.com/users');
             if (!response.ok) throw new Error('Failed to fetch users');
 
-            const users = await response.json();
-            const user = users.find((user) => user.username === username) ;
+            const users = await response.json(); // sets data to a variable
+            const user = users.find((user) => user.username === username) ; // compares the api data to local data
 
-            if (!user || user.password !== password) throw new Error('Invalid username or password');
+            if (!user || user.password !== password) throw new Error('Invalid username or password'); //if they don't match, throws an error
 
-            dispatch(logIn({ user }));
-            setLoginError(null);
+            dispatch(logIn({ user })); //stores user in Redux
+            setLoginError(null); // Error logging
             setShowSuccessModal(true);
 
-            localStorage.setItem('userSession', JSON.stringify(user));
+            localStorage.setItem('userSession', JSON.stringify(user)); //stores user information in session storage
         } catch(error) {
-            setLoginError(error.message);
+            setLoginError(error.message); //error logging
             dispatch(setError(error.message));
         } finally {
             setIsLoading(false);
@@ -43,7 +43,7 @@ const Login = () => {
     };
 
     const handleClose = () => {
-        setShowSuccessModal(false);
+        setShowSuccessModal(false); //sets up navigation to the home page
         navigate('/home');
     }
 

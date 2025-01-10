@@ -14,16 +14,16 @@ const OrderHistory = () => {
     const [expandedCartId, setExpandedCartId] = useState(null);
     const [t] = useTranslation();
 
-    useEffect(() => {
+    useEffect(() => { // returns to login if no one is logged in
         if (!user) {
             return navigate("/")
         } 
     }, [user, navigate])
 
-    const userId = user.user.id
-    console.log(userId);
+    const userId = user.user.id // sets userId to the id of the currently logged-in user
+    console.log(userId); // debugging
 
-    const fetchCarts = async () => {
+    const fetchCarts = async () => { // fetches cart data according to a user id
         const response = await fetch(`https://fakestoreapi.com/carts/user/${userId}`)
         if (!response) throw new Error('Failed to fetch carts');
         const carts = await response.json();
@@ -31,7 +31,7 @@ const OrderHistory = () => {
     }
 
 
-    const { data: carts, isLoading, error } = useQuery({
+    const { data: carts, isLoading, error } = useQuery({ // React Query updates the carts state 
         queryKey: ['carts'],
         queryFn: fetchCarts,
         refetchOnReconnect: true,
@@ -42,15 +42,15 @@ const OrderHistory = () => {
         cacheTime: 15 * 60 * 1000
     });
 
-    sessionStorage.setItem('cartHistory', carts)
+    sessionStorage.setItem('cartHistory', carts) // stores the carts in session data
     console.log(carts)
 
     const findProductById = useMemo(() =>{
         return (productId) =>
-            products?.find((product) => product.id === productId)
+            products?.find((product) => product.id === productId) // compares the product id in the cart with product id's in the products state, if the state is not null. Memoizes result
     }, [products]);
 
-    const calculateCartTotal = useMemo(() => {
+    const calculateCartTotal = useMemo(() => { // calculates the total cost and memoizes it so that it does not rerender
         return (cartProducts) => {
             return cartProducts.reduce((acc, product) => {
                 const productDetails = findProductById(product.productId);
@@ -61,8 +61,8 @@ const OrderHistory = () => {
     }, [products]);
 
     const toggleCartDetails = (cartId) => {
-        setExpandedCartId(expandedCartId === cartId ? null : cartId)
-    }
+        setExpandedCartId(expandedCartId === cartId ? null : cartId) // toggle for details display
+    } 
 
     if (isLoading) return <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>;
     if (error) {

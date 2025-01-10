@@ -18,17 +18,15 @@ const UpdateUserAccount = () => {
     const user = useSelector((state) => state.userAccount.user);
     const [t] = useTranslation();
 
-    console.log("User object:", user);
+    console.log("User object:", user); // debugging
 
-    useEffect(() => {
+    useEffect(() => { // returns to login if user is not logged in already
         if (!user) {
             navigate('/'); 
         }
     }, [user, navigate])
-    const queryClient = useQueryClient();
-
-    
-
+    const queryClient = useQueryClient();    
+    // sets a local state for ease of updating redux - if there is not anything in the redux store, sets it to a blank state to prevent errors
     const [formState, setFormState] = useState(user.user || {
         name: {
             firstname: '', 
@@ -44,7 +42,7 @@ const UpdateUserAccount = () => {
         } 
     }); 
     
-    const putUserAccount = async () => {
+    const putUserAccount = async () => { // updates user account info based on id of user logged in
         setIsLoadingUpdate(true);
         const response = await fetch(`https://fakestoreapi.com/users/${user.user.id}`, {
             method: "PUT",
@@ -55,7 +53,7 @@ const UpdateUserAccount = () => {
         return response.json();
     }
 
-    const deleteUserAccount = async (user) => {
+    const deleteUserAccount = async (user) => { // deletes data of logged-in user
         setIsLoadingDelete(true);
         const response = await fetch(`https://fakestoreapi.com/users/${user.user.id}`, {
             method: "DELETE",
@@ -64,8 +62,8 @@ const UpdateUserAccount = () => {
         return response.json();
     }
 
-    const { mutate: updateMutate, isError: isUpdateError, error: updateError } = useMutation({
-        mutationFn: putUserAccount,
+    const { mutate: updateMutate, isError: isUpdateError, error: updateError } = useMutation({ // sets up mutation to update React Query state
+        mutationFn: putUserAccount, 
         onSuccess: (data) => {
             setShowSuccessModal(true);
             setIsLoadingUpdate(false);
@@ -74,7 +72,7 @@ const UpdateUserAccount = () => {
         }
     })
 
-    const { mutate: deleteMutate, isError: isDeleteError, error: deleteError } = useMutation({
+    const { mutate: deleteMutate, isError: isDeleteError, error: deleteError } = useMutation({ // Sets up mutation to delete form React Query
         mutationFn: deleteUserAccount,
         onSuccess: (data) => {
             setIsLoadingDelete(false);
@@ -84,27 +82,27 @@ const UpdateUserAccount = () => {
         }
     })
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => { // handles changes made in the form
         e.preventDefault();
         updateMutate(formState);
         console.log("Submitting form with data:", formState);
         e.target.reset();
     }
-    const handleDeleteClick = (e) => {
+    const handleDeleteClick = (e) => { // Handles warning before deleting account
         e.preventDefault();
         setShowConfirmDeleteModal(true);
     } 
-    const handleDeleteConfirm = async (e) => {
+    const handleDeleteConfirm = async (e) => { //handles delete confirmatiom
         e.preventDefault();
         deleteMutate(user);
         setShowConfirmDeleteModal(false);
     }
 
-    const handleDeleteCancel = () => {
+    const handleDeleteCancel = () => { // allows you to cancel delete option
         setShowConfirmDeleteModal(false);
     }
 
-    const handleChange = (e) => {
+    const handleChange = (e) => { // updates the state used to update the Redux store
         const { name, value } = e.target;
         const updatedUser = { ...formState }; 
 
@@ -115,7 +113,7 @@ const UpdateUserAccount = () => {
         setFormState(updatedUser);
     };
 
-    const handleClose = () => {
+    const handleClose = () => { // ensures proper navigation after deletion or update
         setShowSuccessModal(false);
         setShowDeleteModal(false);
         navigate(showSuccessModal? '/home' : '/');

@@ -22,38 +22,38 @@ const ShoppingCart = () => {
         dispatch(checkout()), [dispatch];
         setShowSuccessModal(true);
     });
-    const handleDeleteItem = useCallback((id) => dispatch(deleteItem({ id })), [dispatch]);
+    const handleDeleteItem = useCallback((id) => dispatch(deleteItem({ id })), [dispatch]); // reduces rerendering of redux action 
 
-    const handleClose = () => {
+    const handleClose = () => { // handles navigation back to the home page
         setShowSuccessModal(false);
         navigate('/home');
     }
-    useEffect(() => {
+    useEffect(() => { // stores cart items in session storage
         sessionStorage.setItem('cartItems', JSON.stringify(cart.items));
-    }, [cart.items]); 
+    }, [cart.items]);  
 
     const productQueries = useQueries({
-        queries: cartItemIds.map(id => ({
+        queries: cartItemIds.map(id => ({ // fetches multiple products at once for use in the cart--reduces loadtimes
             queryKey: ['products', id],
             queryFn: () => fetch(`https://fakestoreapi.com/products/${id}`).then(res => res.json())
         }))
     });
 
-    const getProductName = useCallback((id) => {
+    const getProductName = useCallback((id) => { // gets the product names based on their id
         const index = cartItemIds.findIndex(itemId => itemId === id);
         const productQuery = productQueries[index];
         return productQuery?.data?.title || 'Unknown Product';
     }, [productQueries, cartItemIds]);
 
     const productNames = useMemo(() =>
-        cartItemIds.reduce((acc, id) => ({ 
+        cartItemIds.reduce((acc, id) => ({ // memoizes reduce results for storing product names in an object
             ...acc,
         [id]: getProductName(id)
         }), {}), 
     [cartItemIds, getProductName]); 
     
 
-    const totalPrice = useMemo(() => {
+    const totalPrice = useMemo(() => { // calculates total price
         return cartItemIds.reduce((total, id) => {
             const index = cartItemIds.findIndex(itemId => itemId === id);
             const productQuery = productQueries[index];

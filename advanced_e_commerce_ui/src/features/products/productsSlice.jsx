@@ -4,12 +4,12 @@ const productsSlice = createSlice({
     name: 'products', 
     initialState: {
         items: [],
-        status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+        status: 'idle',
         error: null,
     },
     reducers: {
         sortProducts: (state, action) => {
-            const criteria = action.payload;
+            const criteria = action.payload; // allows sorting by price, name, and category
             if (criteria === 'Price asc.') {
                 state.items.sort((a, b) => a.price - b.price);
             } else if (criteria === 'Price desc.') {
@@ -20,7 +20,7 @@ const productsSlice = createSlice({
                 state.items.sort((a, b) => a.category.localeCompare(b.category))
             }
         },
-        setProducts: (state, action) => {
+        setProducts: (state, action) => { // adds products to redux state for manipulation
             state.items = action.payload;
         }
     }

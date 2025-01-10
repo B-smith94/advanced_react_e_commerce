@@ -1,17 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = { // defines initial state
-    //items: {}, // id: quantity
+    
     items: JSON.parse(sessionStorage.getItem('cartItems')) || {}, // pulls from session storage, or returns blank object if sessionStorage does not have cartItems
     totalItems: 0,
 };
 
 export const cartSlice = createSlice({ 
-    name: 'cart', // name of the slice
+    name: 'cart', 
     initialState, 
-    reducers: { // define changes to the state
-        addItem: (state, action) => { // action - key value pair where the key is the name of the action, and the value is a function
-            const { id } = action.payload;
+    reducers: { 
+        addItem: (state, action) => {
+            const { id } = action.payload; // adds quantity of items to the cart
             if (state.items[id]) {
                 state.items[id] += 1;
             } else {
@@ -19,7 +19,7 @@ export const cartSlice = createSlice({
             }
             state.totalItems += 1;
         },
-        removeItem: (state, action) => { 
+        removeItem: (state, action) => {  // removes quantity of items from the cart
             const { id } = action.payload;
             if (state.items [id]) {
                 state.items[id] -= 1; 
@@ -29,19 +29,19 @@ export const cartSlice = createSlice({
                 state.totalItems -= 1;
             }
         },
-        deleteItem: (state, action) => {
+        deleteItem: (state, action) => { // removes items entirely from the cart
             const { id } = action.payload;
             if (state.items [id]) {
                 delete state.items[id];
             }
         },
-        checkout: (state) => {
+        checkout: (state) => { // handles chceckout - clears the state
             state.items={}; 
             state.totalItems = 0;
         },
     },
 });
 
-export const { addItem, removeItem, deleteItem, checkout } = cartSlice.actions; // allows actions to be called in any other componenets
+export const { addItem, removeItem, deleteItem, checkout } = cartSlice.actions;
 
-export default cartSlice.reducer; // becomes cartReducer in store.jsx
+export default cartSlice.reducer; 

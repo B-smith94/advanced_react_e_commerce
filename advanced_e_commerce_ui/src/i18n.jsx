@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { Placeholder } from 'react-bootstrap';
 import { initReactI18next } from 'react-i18next';
 
+// Translations. Currently only in English and French, may add more languages later.
+
 const resources = {
     en: {
         translation: {
@@ -188,10 +190,10 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: 'en', //Language to use initially
-        keySeparator: false, // We do not use keys in form messages.welcome
+        lng: 'en',
+        keySeparator: false, 
         interpolation: {
-            escapevalue: false, // React already safes form XSS
+            escapevalue: false, 
         },
     });
 

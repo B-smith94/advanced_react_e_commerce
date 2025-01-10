@@ -15,11 +15,11 @@ const ProductCatalog = () => {
     const [criteria, setCriteria] = useState('')
     const products = useSelector((state) => state.products.items);
     const [t] = useTranslation();
-
+    // useCallback prevents unnecessary rerendering of redux actions
     const handleSortProducts = useCallback((criteria) => dispatch(sortProducts(criteria)), [dispatch]);
-    const handleSetProducts = useCallback((productsList) => dispatch(setProducts(productsList)), [dispatch]);
+    const handleSetProducts = useCallback((productsList) => dispatch(setProducts(productsList)), [dispatch]); 
 
-    const fetchProducts = async () => {
+    const fetchProducts = async () => { // fetches products data
         const response = await fetch('https://fakestoreapi.com/products');
         if (!response.ok) {
             throw new Error('Failed to fetch products');
@@ -28,7 +28,7 @@ const ProductCatalog = () => {
         return products;
     }
     // runs fetchProducts automatically, stores the data in the 'products' state, and sets parameters for when to rerun the function
-    const { data: apiProducts, isLoading, error } = useQuery({ 
+    const { data: apiProducts, isLoading, error } = useQuery({  //stores data in products state via React Query
         queryKey: ['products'], 
         queryFn: fetchProducts,
         refetchOnReconnect: true, 
@@ -40,22 +40,22 @@ const ProductCatalog = () => {
     });
 
 
-    useEffect(() => {
+    useEffect(() => { // adds products to redux for manipulation
         if (apiProducts) {
             handleSetProducts(apiProducts);
         }
     }, [apiProducts, dispatch]);
     
     useEffect(() => {
-        localStorage.setItem('catalogItems', JSON.stringify(products.items))
+        localStorage.setItem('catalogItems', JSON.stringify(products.items)) //adds products to local storage to reduce rerendering
     }, [products.items])
 
     // Adds items to the cart
-    const handleAddToCart = (id) => {
+    const handleAddToCart = (id) => { //adds items to the cart
         dispatch(addItem({ id }));
     };
     // Search and filter functions
-    const filterProducts = useMemo(() => {
+    const filterProducts = useMemo(() => { //sets up filtering functions by category, title, or price range, then memoizes results
         if (!products) return [];
         
         return products.filter((product) => {
@@ -69,7 +69,7 @@ const ProductCatalog = () => {
     }, [products, category, title, price])
 
     if (isLoading) return <Spinner animation='border' role='status'><span className='visually-hidden'>Loading...</span></Spinner>;
-    if (error) return <Alert variant='danger'>{error.message}</Alert>; 
+    if (error) return <Alert variant='danger'>{error.message}</Alert>;  // loading and error handling
 
     return (
         <div>

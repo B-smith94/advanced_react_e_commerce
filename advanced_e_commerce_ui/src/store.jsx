@@ -7,10 +7,7 @@ export const store = configureStore({
     reducer: {
         userAccount: userAccountsReducer,
         products: productReducer,
-        cart: cartReducer, // cartSlice.reducer, handles state. Use dispatch(<action>) to call, cartReducer will find action that matches and perform that action
+        cart: cartReducer, 
     },
-}); //no need to export default
+}); 
 
-// store - the central hub of our application state
-// reducer - similar to our "set" hooks--Defines how our state changes
-// Slices - breaks our state into more manageable pieces
