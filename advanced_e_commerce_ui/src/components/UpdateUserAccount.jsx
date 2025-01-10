@@ -128,7 +128,7 @@ const UpdateUserAccount = () => {
             {isDeleteError && <Alert variant='danger'>Failed to delete account: {deleteError.message}</Alert>}
             <h2>{t('updateInfo')}</h2>
              <Form onSubmit={handleSubmit} role='form'>
-                <Form.Group controlId='firstname'>
+                <Form.Group controlId='firstname' className='mb-4'>
                     <Form.Label>{t('firstName')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -141,7 +141,7 @@ const UpdateUserAccount = () => {
                      required  
                     />
                 </Form.Group>
-                <Form.Group controlId='lastname'>
+                <Form.Group controlId='lastname' className='mb-4'>
                     <Form.Label>{t('lastName')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -154,7 +154,7 @@ const UpdateUserAccount = () => {
                      required 
                     />
                 </Form.Group>
-                <Form.Group controlId='username'>
+                <Form.Group controlId='username' className='mb-4'>
                     <Form.Label>{t('username')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -167,7 +167,7 @@ const UpdateUserAccount = () => {
                      required  
                     />
                 </Form.Group>
-                <Form.Group controlId='password'>
+                <Form.Group controlId='password' className='mb-4'>
                     <Form.Label>{t('password')}</Form.Label>
                     <Form.Control
                      type="password"  
@@ -180,7 +180,7 @@ const UpdateUserAccount = () => {
                      required  
                     />
                 </Form.Group>
-                <Form.Group controlId='email'>
+                <Form.Group controlId='email' className='mb-4'>
                     <Form.Label>{t('email')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -193,7 +193,7 @@ const UpdateUserAccount = () => {
                      required 
                     />
                 </Form.Group>
-                <Form.Group controlId='phone'>
+                <Form.Group controlId='phone' className='mb-4'>
                     <Form.Label>{t('phone')}</Form.Label>
                     <Form.Control
                      type="tel" 
@@ -206,7 +206,9 @@ const UpdateUserAccount = () => {
                      required 
                     />
                 </Form.Group>
-                <Form.Group controlId='city'>
+                <hr />
+                <h4 className='mb-3'>Address</h4>
+                <Form.Group controlId='city' className='mb-4'>
                     <Form.Label>{t('city')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -219,7 +221,7 @@ const UpdateUserAccount = () => {
                      required
                     />
                 </Form.Group>
-                <Form.Group controlId='street'>
+                <Form.Group controlId='street' className='mb-4'>
                     <Form.Label>{t('street')}</Form.Label>
                     <Form.Control
                      type="text" 
@@ -232,7 +234,7 @@ const UpdateUserAccount = () => {
                      required 
                     />
                 </Form.Group>
-                <Form.Group controlId='zipcode'>
+                <Form.Group controlId='zipcode' className='mb-4'>
                     <Form.Label>{t('zipcode')}</Form.Label>
                     <Form.Control
                      type="text" 
