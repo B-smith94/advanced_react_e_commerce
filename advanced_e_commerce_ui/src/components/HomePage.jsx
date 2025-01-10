@@ -25,7 +25,7 @@ function HomePage() {
             <NavBar />
             <h1>Welcome, {userName}!</h1>
             <hr />
-            <NavLink to="/cart">{ cartCount > 0 ? `Your cart has ${cartCount} item(s).` : "Your cart is empty." }</NavLink>
+            <NavLink to="/cart" role="link">{ cartCount > 0 ? `Your cart has ${cartCount} item(s).` : "Your cart is empty." }</NavLink>
             <ProductCatalog />
         </Container>
     );

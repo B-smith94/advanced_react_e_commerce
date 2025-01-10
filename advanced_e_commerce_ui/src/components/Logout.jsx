@@ -9,13 +9,13 @@ function Logout() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        sessionStorage.removeItem('userSession');
+        localStorage.removeItem('userSession');
         dispatch(logOut());
         navigate('/');
     };
 
     return (
-        <Button variant="danger" onClick={handleLogout}>Logout</Button>
+        <Button variant="danger" aria-describedby='logout' onClick={handleLogout} role="button"><p id="logout">Logout</p></Button>
     );
 }
 

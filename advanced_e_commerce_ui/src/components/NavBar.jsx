@@ -7,7 +7,7 @@ const NavBar = () => {
     return (
         <>
             <Navbar bg='light' expand='lg' as='header' role='navigation'>
-                <Navbar.Brand href='/home'>E-Commerce Platform</Navbar.Brand>
+                <Navbar.Brand as={NavLink} to='/home'>E-Commerce Platform</Navbar.Brand>
                 <Navbar.Toggle aria-controls='basic-navbar-nav' />
                 <Navbar.Collapse id='basic-navbar-nav'>
                     <Nav className='align-items-center mr-auto' as='nav' role='menubar'>

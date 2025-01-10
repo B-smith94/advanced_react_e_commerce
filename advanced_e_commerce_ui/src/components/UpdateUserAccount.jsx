@@ -120,7 +120,7 @@ const UpdateUserAccount = () => {
             <NavBar />
             {isUpdateError && <Alert variant='danger'>Failed to update account: {updateError.message}</Alert>}
             {isDeleteError && <Alert variant='danger'>Failed to delete account: {deleteError.message}</Alert>}
-             <Form onSubmit={handleSubmit}>
+             <Form onSubmit={handleSubmit} role='form'>
                 <Form.Group controlId='firstname'>
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
@@ -129,6 +129,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your first name'
                      value={formState.name.firstname}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='firstname'
                      required  
                     />
                 </Form.Group>
@@ -140,6 +141,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your last name'
                      value={formState.name.lastname}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='lastname'
                      required 
                     />
                 </Form.Group>
@@ -151,6 +153,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your desired username'
                      value={formState.username}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='username'
                      required  
                     />
                 </Form.Group>
@@ -162,6 +165,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your password'
                      value={formState.password}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='password'
                      required  
                     />
                 </Form.Group>
@@ -173,6 +177,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your email address'
                      value={formState.email}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='email'
                      required 
                     />
                 </Form.Group>
@@ -184,6 +189,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your phone number'
                      value={formState.phone}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='phone'
                      required 
                     />
                 </Form.Group>
@@ -195,6 +201,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your home city'
                      value={formState.address.city}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='city'
                      required
                     />
                 </Form.Group>
@@ -206,6 +213,7 @@ const UpdateUserAccount = () => {
                      placeholder='Enter your street address'
                      value={formState.address.street}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='street'
                      required 
                     />
                 </Form.Group>
@@ -217,36 +225,37 @@ const UpdateUserAccount = () => {
                      placeholder='Enter zip code'
                      value={formState.address.zipcode}
                      onChange={(e) => handleChange(e)}
+                     aria-describedby='zipcode'
                      required 
                     />
                 </Form.Group>
 
-                <Button variant='primary' type="submit" className='m-2' disabled={isLoadingUpdate}>
+                <Button variant='primary' type="submit" className='m-2' disabled={isLoadingUpdate} role='button'>
                     {isLoadingUpdate ? <Spinner animation='border' size='sm' /> : 'Update Account'}
                 </Button>
 
-                <Button variant='danger'  className='m-2' onClick={handleDeleteClick} disabled={isLoadingDelete}>
+                <Button variant='danger'  className='m-2' onClick={handleDeleteClick} disabled={isLoadingDelete} role='button'>
                     {isLoadingDelete ? <Spinner animation='border' size='sm' /> : 'Delete Account'}
                 </Button>
             </Form>
 
-            <Modal show={showSuccessModal || showDeleteModal} onHide={handleClose}>
+            <Modal show={showSuccessModal || showDeleteModal} onHide={handleClose} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title>{showSuccessModal? 'Update Successful!': 'Deletion Successful'}</Modal.Title>
+                    <Modal.Title id='modalTitle'>{showSuccessModal? 'Update Successful!': 'Deletion Successful'}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{showSuccessModal? 'Account update successful. Happy shopping!': "Account successfully deleted. We'll miss you!" }</Modal.Body>
+                <Modal.Body id='modalDescription'>{showSuccessModal? 'Account update successful. Happy shopping!': "Account successfully deleted. We'll miss you!" }</Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={handleClose}>
+                    <Button variant='secondary' onClick={handleClose} role='button'>
                         {showSuccessModal? 'Back to Home' : 'Go to Login'}
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={showConfirmDeleteModal} onHide={handleDeleteCancel}>
+            <Modal show={showConfirmDeleteModal} onHide={handleDeleteCancel} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title>Are you sure you want to delete your account?</Modal.Title>
+                    <Modal.Title id='modalTitle'>Are you sure you want to delete your account?</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body id='modalDescription'>
                     This action is irreversible.
                 </Modal.Body>
                 <Modal.Footer>

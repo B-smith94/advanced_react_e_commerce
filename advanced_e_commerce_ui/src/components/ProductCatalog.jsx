@@ -36,11 +36,17 @@ const ProductCatalog = () => {
         cacheTime: 15 * 60 * 1000 
     });
 
+
     useEffect(() => {
         if (apiProducts) {
             handleSetProducts(apiProducts);
         }
     }, [apiProducts, dispatch]);
+    
+    useEffect(() => {
+        localStorage.setItem('catalogItems', JSON.stringify(products.items))
+    }, [products.items])
+
     // Adds items to the cart
     const handleAddToCart = (id) => {
         dispatch(addItem({ id }));
@@ -68,14 +74,14 @@ const ProductCatalog = () => {
             <Row>
                 <Col>
                     <Form.Group>
-                        <Dropdown className='mb-2'>
+                        <Dropdown className='mb-2' role='menu'>
                             <Dropdown.Toggle id='dropdown-filter-category'>
                                 Filter by {category}
                             </Dropdown.Toggle>
                             <Dropdown.Menu aria-labelledby='dropdown-filter-category'>
-                                <Dropdown.Item onClick={() => setCategory('')}>Show All</Dropdown.Item>
+                                <Dropdown.Item onClick={() => setCategory('')} role='menuitem'>Show All</Dropdown.Item>
                                 {Array.from(new Set(products.map(product => product.category))).map((category) => (
-                                    <Dropdown.Item key={category} onClick={() => setCategory(category)}>
+                                    <Dropdown.Item key={category} onClick={() => setCategory(category)} role='menuitem'>
                                         {category}
                                     </Dropdown.Item>
                                 ))}
@@ -83,26 +89,26 @@ const ProductCatalog = () => {
                         </Dropdown>
                     </Form.Group>
                     <Form.Group>
-                        <Dropdown className='mb-2'>
+                        <Dropdown className='mb-2' role='menu'>
                             <Dropdown.Toggle id='dropdown-sort'>
                                 Sort Products by {criteria}
                             </Dropdown.Toggle>
                             <Dropdown.Menu aria-labelledby='dropdown-sort'>
-                                <Dropdown.Item onClick={() => {setCriteria('Title'); handleSortProducts('Title')}}>Title</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Category'); handleSortProducts('Category')}}>Category</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Price asc.'); handleSortProducts('Price asc.')}}>Price Asc.</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {setCriteria('Price desc.'); handleSortProducts('Price desc.')}}>Price Desc.</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Title'); handleSortProducts('Title')}} role='menuitem'>Title</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Category'); handleSortProducts('Category')}} role='menuitem'>Category</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price asc.'); handleSortProducts('Price asc.')}} role='menuitem'>Price Asc.</Dropdown.Item>
+                                <Dropdown.Item onClick={() => {setCriteria('Price desc.'); handleSortProducts('Price desc.')}} role='menuitem'>Price Desc.</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Form.Group>
                 </Col>
             </Row>
-            <Form className='mb-2'>
+            <Form className='mb-2' role='form'>
                 <hr />
                 <h5>Search Products</h5>
                 <Row>
                     <Col className='col-6'>
-                        <Form.Group>
+                        <Form.Group controlId='productName'>
                             <Form.Label>Name</Form.Label>
                             <Form.Control
                              type='text'
@@ -110,28 +116,31 @@ const ProductCatalog = () => {
                              name='title'
                              value={title}
                              onChange={(e) => setTitle(e.target.value)}
+                             aria-describedby='productName'
                             />
                         </Form.Group>
                     </Col>
                     <Col className='col-3'>
-                        <Form.Group>
+                        <Form.Group controlId='priceMin'>
                             <Form.Label>Minimum Price</Form.Label>
                             <Form.Control
                              type='number'
                              placeholder='Enter minimum price'
                              value={price.min}
                              onChange={(e) => setPrice((prevPrice) => ({...prevPrice, min: e.target.value}))}
+                             aria-describedby='priceMin'
                             />
                         </Form.Group>
                     </Col>
                     <Col className='col-3'>
-                        <Form.Group>
+                        <Form.Group controlId='priceMax'>
                             <Form.Label>Maximum Price</Form.Label>
                             <Form.Control
                              type='number'
                              placeholder='Enter maximum price'
                              value={price.max}
                              onChange={(e) => setPrice((prevPrice) => ({...prevPrice, max: e.target.value}))}
+                             aria-describedby='priceMax'
                             />
                         </Form.Group>
                     </Col>
@@ -140,14 +149,14 @@ const ProductCatalog = () => {
             <Row xs={1} md={4} className='g-4'>
             {filterProducts.map(product => (
                 <Col key={product.id}>
-                    <Card style={{ width: '18rem' }}>
+                    <Card style={{ width: '18rem' }} aria-labelledby='cardTitle' aria-describedby='cardDescription'>
                         <div style={{ padding: '10px' }}>
-                            <Card.Img variant='top' src={product.image} style={{ height: '250px', objectFit: 'contain' }} />
+                            <Card.Img variant='top' src={product.image} role='img' alt={`picture of ${product.title}`} style={{ height: '250px', objectFit: 'contain' }} />
                         </div>
                         <Card.Body>
-                            <Card.Title>{product.title}</Card.Title>
+                            <Card.Title id='cardTitle'>{product.title}</Card.Title>
                             <Card.Text><b>Category:</b> {product.category}</Card.Text>
-                            <Card.Text>{product.description}</Card.Text>
+                            <Card.Text id='cardDescription'>{product.description}</Card.Text>
                             <Card.Text><b>Price:</b> ${product.price}</Card.Text>
                             <Button variant='primary' onClick={() => handleAddToCart(product.id)}>Add to Cart</Button>
                         </Card.Body>

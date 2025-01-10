@@ -69,31 +69,31 @@ const ShoppingCart = () => {
         <div>
             <NavBar />
             <h2>Shopping Cart</h2>
-            <ListGroup> 
+            <ListGroup role='list'> 
                 {totalPrice > 0 ? Object.entries(cart.items).map(([id, quantity]) => (
-                    <ListGroup.Item key={id} className='d-flex justify-content-between align-items-center'>
+                    <ListGroup.Item key={id} className='d-flex justify-content-between align-items-center' role='listitem'>
                         <span>{productNames[id]}  - Quantity: {quantity}</span>
                         <div>
-                            <Button variant='light' className='me-1' onClick={() => handleAddItem(id)}>+</Button>
-                            <Button variant='light' className='me-1' onClick={() => handleRemoveItem(id)}>-</Button>
-                            <Button variant='danger' onClick={() => handleDeleteItem(id)}>Remove from Cart</Button>
+                            <Button variant='light' className='me-1' onClick={() => handleAddItem(id)} role='button'>+</Button>
+                            <Button variant='light' className='me-1' onClick={() => handleRemoveItem(id)} role='button'>-</Button>
+                            <Button variant='danger' onClick={() => handleDeleteItem(id)} role='button'>Remove from Cart</Button>
                         </div>
                     </ListGroup.Item>
                 )): "Shopping cart is empty."}
             </ListGroup>
             <p>Total Items: {cart.totalItems}</p>
             <p>Total Price: ${totalPrice.toFixed(2)}</p> 
-            <Button variant='primary' onClick={handleCheckout}>Checkout</Button>
+            <Button variant='primary' onClick={handleCheckout} role='button'>Checkout</Button>
             <Link to={'/home'}>
-                <Button variant='secondary' className='ms-2'>Return to Home</Button>
+                <Button variant='secondary' className='ms-2' role='link'>Return to Home</Button>
             </Link>
-            <Modal show={showSuccessModal} onHide={handleClose}>
+            <Modal show={showSuccessModal} onHide={handleClose} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title>All Checked Out!</Modal.Title>
+                    <Modal.Title id='modalTitle'>All Checked Out!</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Product has been successfully checked out!</Modal.Body>
+                <Modal.Body id='modalDescription'>Product has been successfully checked out!</Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={handleClose}>
+                    <Button variant='secondary' onClick={handleClose} role='button'>
                         Return to Product Catalog
                     </Button>
                 </Modal.Footer>

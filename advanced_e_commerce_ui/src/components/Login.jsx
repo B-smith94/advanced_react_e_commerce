@@ -29,7 +29,7 @@ const Login = () => {
             setLoginError(null);
             setShowSuccessModal(true);
 
-            sessionStorage.setItem('userSession', JSON.stringify(user));
+            localStorage.setItem('userSession', JSON.stringify(user));
         } catch(error) {
             setLoginError(error.message);
             dispatch(setError(error.message));
@@ -49,7 +49,7 @@ const Login = () => {
                 <Col md={5} >
                     <h1>Login</h1>
                     {loginError && <Alert variant='danger' className='m-3'>{loginError}</Alert>}
-                    <Form onSubmit={handleLogin}>
+                    <Form onSubmit={handleLogin} role='form'>
                         <Form.Group controlId="usernameInput" className="mb-3">
                             <Form.Label>Username</Form.Label>
                             <Form.Control
@@ -58,6 +58,7 @@ const Login = () => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 isInvalid={!!loginError}
+                                aria-describedby='usernameInput'
                             />
                         </Form.Group>
                         <Form.Group controlId="passwordInput" className="mb-3">
@@ -68,23 +69,24 @@ const Login = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 isInvalid={!!loginError}
+                                aria-describedby='passwordInput'
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="w-100" disabled={isLoading}>
+                        <Button variant="primary" type="submit" className="w-100" disabled={isLoading} role='button'>
                             {isLoading? <Spinner animation='border' size='sm' /> : 'Login'}
                         </Button>
                         <div className='mt-2'>
-                            <p>Or, if you need to make an account, <Button variant='light' onClick={() => navigate('/add-account')}>Click Here.</Button></p>
+                            <p id='makeAccount'>Or, if you need to make an account, <Button variant='light' aria-describedby='makeAccount' onClick={() => navigate('/add-account')} role='button'>Click Here.</Button></p>
                         </div>
                        
                     </Form>
                 </Col>
             </Row>
-            <Modal show={showSuccessModal} onHide={handleClose}>
+            <Modal show={showSuccessModal} onHide={handleClose} aria-labelledby='modalTitle' aria-describedby='modalDescription'>
                 <Modal.Header closeButton>
-                    <Modal.Title>Login Successful!</Modal.Title>
+                    <Modal.Title id='modalTitle'>Login Successful!</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Successfully logged in. Welcome back, {username}!</Modal.Body>
+                <Modal.Body id='modalDescription'>Successfully logged in. Welcome back, {username}!</Modal.Body>
                 <Modal.Footer>
                     <Button variant='primary' onClick={handleClose}>
                         Start Shopping

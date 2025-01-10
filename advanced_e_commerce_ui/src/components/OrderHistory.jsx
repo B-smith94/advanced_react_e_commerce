@@ -1,19 +1,9 @@
-// Steps: 
-
-// 1. Set up a react query to fetch user carts from fakestoreapi.com
-// 2. Configure render so that it displays:
-//      - Cart ID
-//      - Date of Creation
-//      - Total Price
-// 3. Enable users to click on individual orders to view full details, including:
-//      -list of Products
-//      -Total Price of the Order
-
 import { useQuery } from "@tanstack/react-query";
-import { useState, useCallback, useMemo, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Container, ListGroup, Button, Alert, Spinner } from "react-bootstrap";
+import { Container, ListGroup, Button, Alert, Spinner } from "react-bootstrap";
+
 import NavBar from "./NavBar";
 
 const OrderHistory = () => {
@@ -50,18 +40,23 @@ const OrderHistory = () => {
         cacheTime: 15 * 60 * 1000
     });
 
+    sessionStorage.setItem('cartHistory', carts)
     console.log(carts)
 
-    const findProductById = (productId) =>
-        products?.find((product) => product.id === productId);
+    const findProductById = useMemo(() =>{
+        return (productId) =>
+            products?.find((product) => product.id === productId)
+    }, [products]);
 
-    const calculateCartTotal = (cartProducts) => {
-        return cartProducts.reduce((acc, product) => {
-            const productDetails = findProductById(product.productId);
-            const productPrice = productDetails?.price || 0;
-            return acc + productPrice * product.quantity;
-        }, 0)
-    };
+    const calculateCartTotal = useMemo(() => {
+        return (cartProducts) => {
+            return cartProducts.reduce((acc, product) => {
+                const productDetails = findProductById(product.productId);
+                const productPrice = productDetails?.price || 0;
+                return acc + productPrice * product.quantity;
+            }, 0)
+        }
+    }, [products]);
 
     const toggleCartDetails = (cartId) => {
         setExpandedCartId(expandedCartId === cartId ? null : cartId)
@@ -77,24 +72,24 @@ const OrderHistory = () => {
         <Container>
             <NavBar />
             <h2>Order History</h2>
-            <ListGroup>
+            <ListGroup role="list">
                 {carts && carts.length > 0 ? (
                     carts.map((cart) => {
                         const totalPrice = calculateCartTotal(cart.products);
                         return (
-                        <ListGroup.Item key={cart.id} className="p-3">
+                        <ListGroup.Item key={cart.id} className="p-3" role="listitem">
                             <strong>Cart ID:</strong> {cart.id} - 
                             <strong> Order Date:</strong> {cart.date} -  
                             <strong> Total Price: </strong>${totalPrice.toFixed(2)}
-                            <Button variant="light" className="m-2" onClick={() => toggleCartDetails(cart.id)}>
+                            <Button variant="light" role="button" className="m-2" onClick={() => toggleCartDetails(cart.id)}>
                                 {expandedCartId === cart.id ? 'Hide Details' : 'View Details'}    
                             </Button> 
                             {expandedCartId === cart.id && (
-                                <ListGroup className="mt-3">
+                                <ListGroup className="mt-3" role='list'>
                                     {cart.products.map(product => {
                                         const productDetails = findProductById(product.productId);
                                         return (
-                                            <ListGroup.Item key={product.productId}>
+                                            <ListGroup.Item key={product.productId} role="listitem">
                                                 <div>
                                                     <strong>Product Name:</strong> {productDetails?.title || 'Unknown'}
                                                 </div>
@@ -116,5 +111,6 @@ const OrderHistory = () => {
         </Container>
     )
 }
+export const MemoizedOrders = React.memo(OrderHistory);
 
 export default OrderHistory;
