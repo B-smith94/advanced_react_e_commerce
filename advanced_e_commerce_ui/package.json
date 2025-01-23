@@ -6,7 +6,8 @@
   "jest": {
     "testEnvironment": "jest-environment-jsdom",
     "setupFilesAfterEnv": [
-      "@testing-library/jest-dom"
+      "@testing-library/jest-dom",
+      "<rootDir>/jest.setup.js"
     ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
@@ -29,7 +30,8 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^15.4.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
