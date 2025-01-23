@@ -94,7 +94,7 @@ describe('Update User Account Component', () => { // unit tests for UpdateUser
         fireEvent.change(screen.getByLabelText(/Street Address/i), {target: { value: '1342 cool street'}});
         fireEvent.change(screen.getByLabelText(/Zip Code/i), {target: { value: '65421'}});
         
-        fireEvent.click(screen.getByText(/Update Account/i));
+        fireEvent.click(screen.getByRole('button', {name: /Update Account/i}));
 
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
