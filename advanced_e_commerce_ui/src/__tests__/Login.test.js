@@ -55,4 +55,32 @@ describe('Login Component', () => {
             expect(screen.getByText(/invalid username or password/i)).toBeInTheDocument();
         });
     });
+
+    it('stores information in localStorage on successful login', async () => {
+        const mockUser = {
+            username: 'testuser',
+            password: 'testpass',
+            email: 'testuser@example.com',
+        }
+
+        global.fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => [mockUser],
+        });
+
+        const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+
+        renderWithProviders(<Login />)
+
+        fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' }})
+        fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'testpass' } });
+
+        fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+        await waitFor(() => {
+            expect(setItemSpy).toHaveBeenCalledWith('userSession', JSON.stringify(mockUser));
+        });
+
+        setItemSpy.mockRestore();
+    })
 });

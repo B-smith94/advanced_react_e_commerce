@@ -68,7 +68,7 @@ beforeEach(() => {
 
 describe('Update User Account Component', () => { // unit tests for UpdateUser
 
-    const renderWrapper = (ui) => { // adds various wrappers for testing purposes
+    const renderWithProviders = (ui) => { // adds various wrappers for testing purposes
         
         const queryClient = new QueryClient();
     
@@ -82,7 +82,7 @@ describe('Update User Account Component', () => { // unit tests for UpdateUser
     };
 
     test('user account is updated upon submission', async () => {
-        renderWrapper(<UpdateUserAccount />);
+        renderWithProviders(<UpdateUserAccount />);
 
         fireEvent.change(screen.getByLabelText(/First Name/i), {target: { value: 'James'}});
         fireEvent.change(screen.getByLabelText(/Last Name/i), {target: { value: 'Dean'}});
@@ -121,7 +121,7 @@ describe('Update User Account Component', () => { // unit tests for UpdateUser
     // unit test for button to delete a user account
     test('user data is deleted upon clicking the delete button', async () => {
         
-        renderWrapper(<UpdateUserAccount />)
+        renderWithProviders(<UpdateUserAccount />)
 
         store.dispatch(logIn({
             id: 21, 
