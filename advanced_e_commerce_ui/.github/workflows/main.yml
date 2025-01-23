@@ -17,7 +17,7 @@ jobs:
                 node-version: '20'
             - name: Install dependencies
               run: npm ci
-              working-directory: advanced_e_commerce_ui
+              working-directory: advanced_react_e_commerce
             - name: Print debugging information
               run: |
                 echo "Node Version: $(node --version)"
@@ -25,7 +25,7 @@ jobs:
                 echo "Working Dictionary: $(pwd)"
                 echo "Contents of Working Directory: $(ls -l)"
                 echo "Contents of node_modules: $(ls -l node_modules)"
-              working-directory: advanced_e_commerce_ui
+              working-directory: advanced_react_e_commerce
     test:
       needs: build # build must succeed before testing
       runs-on: ubuntu-latest
@@ -41,11 +41,11 @@ jobs:
           
           - name: Install dependencies
             run: npm ci
-            working-directory: advanced_e_commerce_ui
+            working-directory: advanced_react_e_commerce
 
           - name: Run Tests
             run: npm test
-            working-directory: advanced_e_commerce_ui
+            working-directory: advanced_react_e_commerce
     deploy:
         needs: test #tests must succeed before deploying
         runs-on: ubuntu-latest
@@ -57,16 +57,16 @@ jobs:
             node-version: '20'
         - name: Install Dependencies
           run: npm install
-          working-directory: advanced_e_commerce_ui
+          working-directory: advanced_react_e_commerce
         - name: Install Vercel CLI
           run: npm install --global vercel@latest
-          working-directory: advanced_e_commerce_ui
+          working-directory: advanced_react_e_commerce
         - name: Pull Vercel Environment Information
           run: vercel pull --yes --environment=preview --token=${{ secrets.E_COMMERCE_TOKEN }}
-          working-directory: advanced_e_commerce_ui
+          working-directory: advanced_react_e_commerce
         - name: Build Project Artifacts
           run: vercel build --token=${{ secrets.E_COMMERCE_TOKEN }}
-          working-directory: advanced_e_commerce_ui
+          working-directory: advanced_react_e_commerce
         - name: Deploy Project Artifacts to Vercel
           run: vercel deploy --prebuilt --token=${{ secrets.E_COMMERCE_TOKEN }}
-          working-directory: advanced_e_commerce_ui
+          working-directory: advanced_react_e_commerce
