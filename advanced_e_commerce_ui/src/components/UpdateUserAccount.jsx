@@ -27,7 +27,7 @@ const UpdateUserAccount = () => {
     }, [user, navigate])
     const queryClient = useQueryClient();    
     // sets a local state for ease of updating redux - if there is not anything in the redux store, sets it to a blank state to prevent errors
-    const [formState, setFormState] = useState(user.user || {
+    const [formState, setFormState] = useState(user?.user || {
         name: {
             firstname: '', 
             lastname: ''
@@ -276,7 +276,7 @@ const UpdateUserAccount = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={handleDeleteCancel}>{t('cancel')}</Button>
-                    <Button variant='danger' onClick={handleDeleteConfirm}>{t('delete')}</Button>
+                    <Button variant='danger' onClick={handleDeleteConfirm} >{t('delete')}</Button>
                 </Modal.Footer>
             </Modal>
         </Container>         

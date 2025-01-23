@@ -32,13 +32,13 @@ const Login = () => {
             dispatch(logIn({ user })); //stores user in Redux
             setLoginError(null); // Error logging
             setShowSuccessModal(true);
-
             localStorage.setItem('userSession', JSON.stringify(user)); //stores user information in session storage
         } catch(error) {
             setLoginError(error.message); //error logging
             dispatch(setError(error.message));
         } finally {
             setIsLoading(false);
+            
         }
     };
 

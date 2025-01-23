@@ -10,6 +10,7 @@ const userAccountsSlice = createSlice({
         logIn: (state, action) => { // if successfull, adds user to redux state
             state.user = action.payload;
             state.error = null;
+            console.log('User state updated:', state.user);
         },
         logOut: (state) => { // if successfull, removes user from redux state
             state.user = null;

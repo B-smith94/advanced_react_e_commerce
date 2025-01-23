@@ -1,7 +1,11 @@
-import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import userAccountsReducer from '../features/userAccounts/userAccountsSlice.jsx'
 import '@testing-library/jest-dom';
-import CreateUserAccount from '../components/CreateUserAccount';
+import CreateUserAccount from '../components/CreateUserAccount.jsx';
 
 global.fetch = jest.fn(() => 
     Promise.resolve({
@@ -34,8 +38,33 @@ beforeEach(() => {
 });
 
 describe('CreateUserAccount Component', () => { // integration test for CreateUser
+    
+    const initialState = {
+        user: null,
+        error: null,
+    }
+
+    const renderWrapper = (ui) => { // adds various wrappers for testing purposes
+        const store = configureStore({
+            reducer: {
+                userAccount: userAccountsReducer,
+            },
+            preloadedState: initialState,
+        });
+        
+        const queryClient = new QueryClient();
+    
+        return render(
+            <Provider store={store}>
+                <QueryClientProvider client={queryClient}>
+                    <BrowserRouter>{ui}</BrowserRouter>
+                </QueryClientProvider>
+            </Provider>
+        )
+    };
+    
     test('adds new user to the database upon submit', async () => {
-        render(<CreateUserAccount />)
+        renderWrapper(<CreateUserAccount />)
 
         fireEvent.change(screen.getByLabelText(/First Name/i), {target: { value: 'Jimmy'}});
         fireEvent.change(screen.getByLabelText(/Last Name/i), {target: { value: 'Dean'}});
