@@ -25,7 +25,6 @@ function App() {
         <Route path='/order-history' element={<OrderHistory />} />
       </Routes>
     </QueryClientProvider>  
-
   )
 }
 
