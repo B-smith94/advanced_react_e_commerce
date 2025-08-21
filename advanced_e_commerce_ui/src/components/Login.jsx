@@ -98,7 +98,8 @@ const Login = () => {
                         {t('startShopping')}
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal>\
+            <footer>Note: Current build uses Fake Store API for authentication and product information. To log in, use "johnd" for username and "m38rmF$" for password.</footer>
         </Container>
     );
 }
